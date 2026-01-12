@@ -1,6 +1,15 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-viking-gold: #d4af37;
+  --color-viking-wood: #5d4037;
+  --color-viking-stone: #78909c;
+  --color-viking-dark: #263238;
+  --color-viking-blood: #880e4f;
+
+  --font-serif: "Cinzel", serif;
+  --font-sans: "Inter", sans-serif;
+}
 
 @layer base {
   body {
