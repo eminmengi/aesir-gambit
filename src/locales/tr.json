@@ -1,0 +1,8 @@
+{
+    "game": {
+        "title": "Aesir Gambit",
+        "fizzle_warning": "Yetersiz Adak! Bu lütuf boşa gidecek.",
+        "roll": "Zar At",
+        "end_turn": "Turu Bitir"
+    }
+}

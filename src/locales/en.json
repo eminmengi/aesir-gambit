@@ -1,0 +1,8 @@
+{
+    "game": {
+        "title": "Aesir Gambit",
+        "fizzle_warning": "Insufficient Tokens! This favor will fizzle.",
+        "roll": "Roll Dice",
+        "end_turn": "End Turn"
+    }
+}
