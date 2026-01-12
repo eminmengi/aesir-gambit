@@ -73,4 +73,5 @@ export interface GameState {
         [key in PlayerId]: PlayerState;
     };
     winner: PlayerId | null;
+    logs?: string[];
 }
