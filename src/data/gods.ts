@@ -1,4 +1,4 @@
-import { GodFavor, GodFavorId } from "../types/game";
+import type { GodFavor, GodFavorId } from "../types/game";
 
 export const GODS: Record<GodFavorId, GodFavor> = {
     thors_strike: {

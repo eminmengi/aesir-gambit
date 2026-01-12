@@ -1,4 +1,4 @@
-import { PlayerState, GameState, DiceFace } from "../types/game";
+import type { PlayerState, GameState, DiceFace } from "../types/game";
 import { GODS } from "../data/gods";
 
 type ResolutionLog = string[];
