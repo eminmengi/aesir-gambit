@@ -17,6 +17,16 @@ export const GameBoard: React.FC = () => {
         logs,
     } = useGameStore();
 
+    const [isRolling, setIsRolling] = React.useState(false);
+
+    const handleRoll = () => {
+        setIsRolling(true);
+        setTimeout(() => {
+            rollDice('player');
+            setIsRolling(false);
+        }, 800); // Matches animation duration
+    };
+
     const { t } = useTranslation();
 
     // AI Turn Simulation
@@ -54,7 +64,7 @@ export const GameBoard: React.FC = () => {
                                 key={die.id}
                                 face={die.face}
                                 locked={die.locked}
-                                rolling={false}
+                                rolling={false} // Opponent rolling animation to be added later
                                 disabled={true}
                             />
                         ))}
@@ -101,7 +111,7 @@ export const GameBoard: React.FC = () => {
                     {phase === 'ROLL_PHASE' && currentTurn === 'player' && (
                         <>
                             <button
-                                onClick={() => rollDice('player')}
+                                onClick={handleRoll}
                                 disabled={rollCount >= 3}
                                 className="relative group px-10 py-4 bg-gradient-to-b from-viking-gold to-amber-600 rounded-lg shadow-[0_5px_15px_rgba(212,175,55,0.3)] hover:shadow-[0_8px_25px_rgba(212,175,55,0.5)] transform active:scale-95 disabled:opacity-50 disabled:grayscale transition-all duration-300"
                             >
@@ -144,7 +154,7 @@ export const GameBoard: React.FC = () => {
                                 key={die.id}
                                 face={die.face}
                                 locked={die.locked}
-                                rolling={false}
+                                rolling={isRolling && !die.locked} // Only unlocked dice roll
                                 onClick={() => toggleLock('player', idx)}
                                 disabled={currentTurn !== 'player' || phase !== 'ROLL_PHASE' || rollCount >= 3}
                             />

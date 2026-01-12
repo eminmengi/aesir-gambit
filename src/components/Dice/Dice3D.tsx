@@ -1,7 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Sword, Target, Shield, Anchor, Hand } from 'lucide-react'; // Anchor for Helmet placeholder
-import type { DiceFace } from '../../types/game';
+import React, { useEffect, useMemo } from 'react';
+import { motion, useAnimation } from 'framer-motion';
+import type { DiceFace, DiceType } from '../../types/game';
 import clsx from 'clsx';
 
 interface Dice3DProps {
@@ -12,64 +11,215 @@ interface Dice3DProps {
     disabled?: boolean;
 }
 
-const ICONS = {
-    axe: <Sword size={32} className="text-viking-blood rotate-45" />,
-    arrow: <Target size={32} className="text-emerald-600" />,
-    helmet: <Anchor size={32} className="text-slate-600" />, // Placeholder
-    shield: <Shield size={32} className="text-blue-700" />,
-    hand: <Hand size={32} className="text-amber-600" />,
+// --- CUSTOM SVGs FOR EXACT VISUAL MATCH ---
+
+const IconAxe = ({ size, className }: { size: number, className?: string }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
+        <path d="M6 8l4-4 4 4-2 2-2-2m-2 4l8 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <path d="M14 4c2 0 4 2 4 4s-2 4-4 4" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+);
+
+const IconArrow = ({ size, className }: { size: number, className?: string }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+        <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M8 6h10v10" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+);
+
+const IconShield = ({ size, className }: { size: number, className?: string }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" />
+        <circle cx="12" cy="12" r="3" fill="currentColor" className="opacity-50" />
+        <path d="M12 3v18M3 12h18" stroke="currentColor" strokeWidth="1" className="opacity-30" />
+    </svg>
+);
+
+const IconHelmet = ({ size, className }: { size: number, className?: string }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+        <path d="M4 16h16" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M4 16c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="currentColor" strokeWidth="2.5" />
+        <path d="M12 4v4" stroke="currentColor" strokeWidth="2.5" />
+        <path d="M9 8l-1-2" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M15 8l1-2" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M12 8v8" stroke="currentColor" strokeWidth="1.5" className="opacity-50" />
+    </svg>
+);
+
+const IconHand = ({ size, className }: { size: number, className?: string }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+        <path d="M14 4.5v6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M10 4.5v6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M6 6v5a6 6 0 0 0 6 6h4" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M18 11v6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M18 8c0-1-1-2-2-2" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+);
+
+const ICONS: Record<DiceType, React.ReactNode> = {
+    axe: <IconAxe size={48} className="text-[#3e2723] rotate-[15deg]" />,
+    arrow: <IconArrow size={46} className="text-[#b71c1c] rotate-[15deg]" />,
+    helmet: <IconHelmet size={44} className="text-[#37474f]" />,
+    shield: <IconShield size={44} className="text-[#01579b]" />,
+    hand: <IconHand size={42} className="text-[#e65100]" />,
 };
 
-const COLORS = {
-    axe: 'bg-stone-200 border-viking-blood',
-    arrow: 'bg-stone-200 border-emerald-600',
-    helmet: 'bg-stone-200 border-slate-500',
-    shield: 'bg-stone-200 border-blue-600',
-    hand: 'bg-stone-200 border-amber-600',
+// Standard Orlog Dice Neighbors (Visual approximation)
+const NEIGHBORS: Record<DiceType, DiceType[]> = {
+    axe: ['helmet', 'shield', 'arrow', 'hand', 'axe'],
+    arrow: ['shield', 'helmet', 'axe', 'hand', 'arrow'],
+    helmet: ['axe', 'arrow', 'shield', 'hand', 'helmet'],
+    shield: ['arrow', 'axe', 'helmet', 'hand', 'shield'],
+    hand: ['axe', 'helmet', 'arrow', 'shield', 'hand']
 };
 
 export const Dice3D: React.FC<Dice3DProps> = ({ face, locked, onClick, rolling, disabled }) => {
+    const controls = useAnimation();
+
+    // Generate neighbors based on the current face type
+    const decorativeFaces = useMemo(() => {
+        const neighbors = NEIGHBORS[face.type];
+        return [
+            { type: neighbors[0], hasToken: false },
+            { type: neighbors[1], hasToken: true },
+            { type: neighbors[2], hasToken: false },
+            { type: neighbors[3], hasToken: true },
+            { type: neighbors[4], hasToken: false },
+        ];
+    }, [face.type]);
+
+    useEffect(() => {
+        if (rolling) {
+            controls.start({
+                rotateX: [0, 450, 810, 1440],
+                rotateY: [0, 450, 810, 1440],
+                rotateZ: [0, 180, 360],
+                transition: { duration: 0.8, ease: "easeInOut" }
+            });
+        } else {
+            controls.start({
+                rotateX: 0,
+                rotateY: 0,
+                rotateZ: 0,
+                transition: { type: "spring", stiffness: 120, damping: 20 }
+            });
+        }
+    }, [rolling, controls]);
+
+    const halfSize = "40px"; // 80px cube / 2
+
+    const CubeFace = ({
+        style,
+        className,
+        children,
+        isFront = false,
+        type,
+        hasToken = false
+    }: {
+        style?: React.CSSProperties,
+        className?: string,
+        children?: React.ReactNode,
+        isFront?: boolean,
+        type: DiceType,
+        hasToken?: boolean
+    }) => (
+        <div
+            className={clsx(
+                "absolute inset-0 rounded-sm flex items-center justify-center backface-hidden",
+                // Material: Paper Texture
+                "bg-[#d7ccc4] border border-[#8d6e63]",
+                className
+            )}
+            style={style}
+        >
+            {/* Render Icon */}
+            <div className={clsx("transform transition-all duration-300", locked && isFront ? "scale-90" : "scale-100")}>
+                {ICONS[type]}
+            </div>
+
+            {/* Gold Token Border - Explicit Dashed Golden Square as in reference */}
+            {hasToken && (
+                <div className="absolute inset-[6px] border-[3px] border-dashed border-[#e6b800] opacity-90" />
+            )}
+
+            {/* Inner Shadow for recessed look */}
+            <div className="absolute inset-0 shadow-[inset_0_0_15px_rgba(62,39,35,0.2)] pointer-events-none" />
+        </div>
+    );
+
     return (
-        <div className="perspective-500 w-24 h-24">
+        <div className="group relative w-24 h-24 flex items-center justify-center select-none perspective-[800px]">
             <motion.div
                 className={clsx(
-                    "w-full h-full relative preserve-3d cursor-pointer transition-all duration-300",
-                    locked ? "translate-y-4" : "hover:-translate-y-2",
-                    disabled && "opacity-60 cursor-not-allowed"
+                    "w-20 h-20 relative preserve-3d cursor-pointer active:scale-95 transition-all duration-200",
+                    locked ? "translate-y-3" : "hover:-translate-y-2",
+                    disabled && !locked && "opacity-70 grayscale-[0.3]"
                 )}
+                style={{ transformStyle: 'preserve-3d' }}
                 onClick={() => !disabled && onClick?.()}
-                animate={{
-                    rotateX: rolling ? 360 * 2 : 0,
-                    rotateY: rolling ? 360 * 2 : 0,
-                }}
-                transition={{ duration: 0.6, ease: "easeInOut" }}
+                animate={controls}
             >
-                {/* Main Face */}
-                <div className={clsx(
-                    "absolute inset-0 rounded-xl border-4 flex flex-col items-center justify-center shadow-xl backface-hidden",
-                    "bg-[#e8e6e1] bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')]",
-                    locked ? "ring-4 ring-viking-gold ring-offset-2 scale-95" : "",
-                    COLORS[face.type]
-                )}>
-                    {/* Gold Token Border */}
-                    {face.hasToken && (
-                        <div className="absolute inset-1 border-2 border-dashed border-viking-gold rounded-lg opacity-60"></div>
-                    )}
+                {/* FRONT - Result Face */}
+                <CubeFace
+                    style={{ transform: `rotateY(0deg) translateZ(${halfSize})` }}
+                    isFront={true}
+                    type={face.type}
+                    hasToken={face.hasToken}
+                />
 
-                    <div className="transform scale-125 drop-shadow-md">
-                        {ICONS[face.type]}
-                    </div>
+                {/* BACK */}
+                <CubeFace
+                    style={{ transform: `rotateY(180deg) translateZ(${halfSize})` }}
+                    type={decorativeFaces[0].type}
+                    hasToken={decorativeFaces[0].hasToken}
+                />
 
-                    {face.hasToken && (
-                        <span className="absolute bottom-1 text-[8px] font-serif uppercase tracking-widest text-viking-gold font-bold">
-                            God Token
-                        </span>
-                    )}
-                </div>
+                {/* RIGHT */}
+                <CubeFace
+                    style={{ transform: `rotateY(90deg) translateZ(${halfSize})` }}
+                    type={decorativeFaces[1].type}
+                    hasToken={decorativeFaces[1].hasToken}
+                />
 
-                {/* 3D Sides (Optional - for simple depth effect we can use shadows, but here is mock depth) */}
-                <div className="absolute inset-x-0 bottom-0 h-4 bg-stone-400 opacity-50 translate-y-full rounded-[50%] blur-md scale-x-75"></div>
+                {/* LEFT */}
+                <CubeFace
+                    style={{ transform: `rotateY(-90deg) translateZ(${halfSize})` }}
+                    type={decorativeFaces[2].type}
+                    hasToken={decorativeFaces[2].hasToken}
+                />
+
+                {/* TOP */}
+                <CubeFace
+                    style={{ transform: `rotateX(90deg) translateZ(${halfSize})` }}
+                    type={decorativeFaces[3].type}
+                    hasToken={decorativeFaces[3].hasToken}
+                />
+
+                {/* BOTTOM */}
+                <CubeFace
+                    style={{ transform: `rotateX(-90deg) translateZ(${halfSize})` }}
+                    type={decorativeFaces[4].type}
+                    hasToken={decorativeFaces[4].hasToken}
+                />
+
+                {locked && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute -top-10 left-1/2 -translate-x-1/2 flex justify-center perspective-[100px] z-50 pointer-events-none"
+                    >
+                        <div className="px-2 py-0.5 bg-black/80 text-[10px] font-serif text-amber-500 border border-amber-900/50 rounded shadow-lg uppercase tracking-widest backdrop-blur-sm whitespace-nowrap">
+                            Kept
+                        </div>
+                    </motion.div>
+                )}
+
             </motion.div>
+
+            {/* Shadow */}
+            {!locked && !rolling && (
+                <div className="absolute top-20 w-16 h-4 bg-black/30 blur-md rounded-[50%] transition-opacity duration-300 group-hover:scale-110 group-hover:bg-black/20" />
+            )}
         </div>
     );
 };
