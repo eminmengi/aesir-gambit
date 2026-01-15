@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { GODS } from '../../data/gods';
 import type { GodFavorId } from '../../types/game';
 import { useGameStore } from '../../store/gameStore';
-import { Zap, Heart, Shield, Skull, Hand } from 'lucide-react';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -90,11 +89,13 @@ export const GodSelectionModal: React.FC<{ onClose: () => void }> = ({ onClose }
                                     <div className="flex items-start justify-between">
                                         <div className="flex items-center gap-3">
                                             <div className={clsx(
-                                                "w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-inner",
-                                                isSelected ? "bg-viking-gold text-black" : "bg-black/40 text-stone-500"
+                                                "w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-inner transition-colors duration-300",
+                                                isSelected ? "bg-viking-gold text-black" : "bg-black/40 text-stone-500 group-hover:text-stone-300"
                                             )}>
-                                                {/* Placeholder Icon Logic based on ID */}
-                                                {godIcons[god.id] || <Zap size={24} />}
+                                                {(() => {
+                                                    const IconComponent = GOD_ICONS[god.id] || RuneStoneIcon;
+                                                    return <IconComponent size={28} />;
+                                                })()}
                                             </div>
                                             <h3 className={clsx("font-serif font-bold text-lg", isSelected ? "text-viking-gold" : "text-stone-300")}>
                                                 {t(`gods.${god.id}.name`, god.name)}
@@ -146,12 +147,28 @@ const CheckIcon = ({ className }: { className?: string }) => (
     </svg>
 );
 
-// Map God IDs to Lucide Icons for visual flair
-const godIcons: Record<string, React.ReactNode> = {
-    thors_strike: <Zap />,
-    iduns_rejuvenation: <Heart />,
-    vidars_might: <Skull />,
-    heimdalls_watch: <Shield />,
-    tyrs_pledge: <Hand />,
-    // Add others...
+import { ThorHammerIcon, RavenIcon, WolfHeadIcon, ShinyAppleIcon, RuneStoneIcon } from '../Icons/VikingIcons';
+
+// Map God IDs to Viking Icons for visual flair
+const GOD_ICONS: Record<string, React.FC<{ size?: number, className?: string }>> = {
+    'thors_strike': ThorHammerIcon,
+    'iduns_rejuvenation': ShinyAppleIcon,
+    'vidars_might': WolfHeadIcon,
+    'baldrs_invulnerability': RuneStoneIcon,
+    'skadis_hunt': WolfHeadIcon,
+    'freyrs_plenty': ShinyAppleIcon,
+    'skulds_claim': RavenIcon,
+    'ullrs_aim': ThorHammerIcon,
+    'heimdalls_watch': RuneStoneIcon,
+    'friggs_sight': RavenIcon,
+    'bragis_verve': RuneStoneIcon,
+    'mimirs_wisdom': RuneStoneIcon,
+    'hels_grip': RavenIcon,
+    'freyjas_plenty': ShinyAppleIcon,
+    'lokis_trick': WolfHeadIcon,
+    'thrymrs_theft': RavenIcon,
+    'vars_bond': RuneStoneIcon,
+    'brunhilds_fury': ThorHammerIcon,
+    'tyrs_pledge': WolfHeadIcon,
+    'odins_sacrifice': RavenIcon,
 };

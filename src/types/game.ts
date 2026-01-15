@@ -74,6 +74,7 @@ export interface GameState {
     phase: Phase; // Assuming GamePhase was a typo and should be Phase based on existing type
     currentTurn: PlayerId;
     rollCount: number; // 0-3
+    hasRolled: boolean;
     players: {
         player: PlayerState;
         opponent: PlayerState;

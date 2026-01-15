@@ -29,7 +29,7 @@ interface GameActions {
     rollDice: (player: PlayerId) => void;
     toggleLock: (player: PlayerId, dieIndex: number) => void;
     setPlayerGods: (player: PlayerId, godIds: GodFavorId[]) => void;
-    selectGodFavor: (player: PlayerId, godId: string, level: 1 | 2 | 3) => void;
+    selectGodFavor: (player: PlayerId, godId: string, level: 0 | 1 | 2 | 3) => void;
     confirmGodFavorSelection: (player: PlayerId) => void;
     advancePhase: () => void;
     resetGame: () => void;
@@ -39,6 +39,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
     phase: 'ROLL_PHASE',
     currentTurn: 'player', // 'player' or 'opponent'
     rollCount: 0,
+    hasRolled: false,
     players: {
         player: createInitialPlayer('player'),
         opponent: createInitialPlayer('opponent'),
@@ -48,7 +49,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
 
     rollDice: (playerId) => {
         const state = get();
-        if (state.rollCount >= 3) return;
+        if (state.rollCount >= 3 || state.hasRolled) return;
 
         set((state) => {
             const player = state.players[playerId];
@@ -57,11 +58,12 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
             );
 
             return {
+                hasRolled: true,
                 players: {
                     ...state.players,
                     [playerId]: { ...player, dice: newDice }
                 },
-                rollCount: playerId === 'player' ? state.rollCount : state.rollCount // AI sırasında rollCount artmaz, state makinesi yönetir
+                rollCount: playerId === 'player' ? state.rollCount : state.rollCount
             };
         });
     },
@@ -95,16 +97,28 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
 
 
     selectGodFavor: (playerId, godId, level) => {
-        // @ts-ignore - ID mismatch fix later
-        set(state => ({
-            players: {
-                ...state.players,
-                [playerId]: {
-                    ...state.players[playerId],
-                    selectedGodFavor: { godId: godId as any, level }
-                }
+        set(state => {
+            if (level === 0) {
+                return {
+                    players: {
+                        ...state.players,
+                        [playerId]: {
+                            ...state.players[playerId],
+                            selectedGodFavor: null
+                        }
+                    }
+                };
             }
-        }))
+            return {
+                players: {
+                    ...state.players,
+                    [playerId]: {
+                        ...state.players[playerId],
+                        selectedGodFavor: { godId: godId as GodFavorId, level }
+                    }
+                }
+            };
+        })
     },
 
     confirmGodFavorSelection: (_playerId) => {
@@ -127,7 +141,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
             // IF Player 2 played -> Increment roll count or Finish Phase
 
             if (state.currentTurn === 'player') {
-                set({ currentTurn: 'opponent' });
+                set({ currentTurn: 'opponent', hasRolled: false });
             } else {
                 // Opponent finished their roll
                 if (nextRollCount >= 3) {
@@ -135,13 +149,15 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
                     set({
                         phase: 'GOD_FAVOR_PHASE',
                         rollCount: 0,
-                        currentTurn: 'player' // Reset turn for selection
+                        currentTurn: 'player', // Reset turn for selection
+                        hasRolled: false
                     });
                 } else {
                     // Next roll round
                     set({
                         currentTurn: 'player',
-                        rollCount: nextRollCount
+                        rollCount: nextRollCount,
+                        hasRolled: false
                     });
                 }
             }
@@ -175,6 +191,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
                 phase: 'ROLL_PHASE',
                 rollCount: 0,
                 currentTurn: 'player',
+                hasRolled: false,
                 players: {
                     player: {
                         ...state.players.player,
@@ -196,6 +213,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
             phase: 'ROLL_PHASE',
             currentTurn: 'player',
             rollCount: 0,
+            hasRolled: false,
             players: {
                 player: createInitialPlayer('player'),
                 opponent: createInitialPlayer('opponent'),

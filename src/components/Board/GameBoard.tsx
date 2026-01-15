@@ -18,6 +18,7 @@ export const GameBoard: React.FC = () => {
         advancePhase,
         resetGame: _resetGame,
         logs,
+        hasRolled,
     } = useGameStore();
 
     const [isRolling, setIsRolling] = React.useState(false);
@@ -158,7 +159,7 @@ export const GameBoard: React.FC = () => {
                         <>
                             <button
                                 onClick={handleRoll}
-                                disabled={rollCount >= 3}
+                                disabled={rollCount >= 3 || hasRolled}
                                 className="relative group px-10 py-4 bg-gradient-to-b from-viking-gold to-amber-600 rounded-lg shadow-[0_5px_15px_rgba(212,175,55,0.3)] hover:shadow-[0_8px_25px_rgba(212,175,55,0.5)] transform active:scale-95 disabled:opacity-50 disabled:grayscale transition-all duration-300"
                             >
                                 <div className="font-serif font-bold text-slate-900 text-xl tracking-wider uppercase flex items-center gap-2">
@@ -176,6 +177,15 @@ export const GameBoard: React.FC = () => {
                         </>
                     )}
 
+                    {phase === 'GOD_FAVOR_PHASE' && (
+                        <button
+                            onClick={advancePhase}
+                            className="px-12 py-5 bg-gradient-to-r from-viking-gold to-amber-500 text-black font-serif font-bold text-xl rounded-xl shadow-[0_0_30px_rgba(212,175,55,0.4)] animate-pulse border-2 border-white/20 uppercase tracking-[0.2em] hover:scale-105 transition-transform"
+                        >
+                            {t('gods.start_battle')}
+                        </button>
+                    )}
+
                     {phase === 'RESOLUTION_PHASE' && (
                         <button
                             onClick={advancePhase}
@@ -190,9 +200,6 @@ export const GameBoard: React.FC = () => {
             {/* --- PLAYER AREA (BOTTOM) --- */}
             <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-6 pb-8">
                 <div className="relative p-8 rounded-3xl bg-gradient-to-b from-slate-900/80 to-[#15171b]/90 border border-viking-gold/20 shadow-2xl backdrop-blur-md">
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#1a1c20] border border-viking-gold/30 rounded-full text-[10px] text-viking-gold uppercase tracking-widest shadow-[0_0_10px_rgba(212,175,55,0.2)]">
-                        {t('game.your_bowl')}
-                    </div>
                     <div className="flex gap-6">
                         {p1.dice.map((die, idx) => (
                             <Dice3D

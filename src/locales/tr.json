@@ -4,10 +4,11 @@
         "fizzle_warning": "Yetersiz Adak! Bu lütuf boşa gidecek.",
         "roll": "Zar At",
         "end_turn": "Turu Bitir",
-        "next_round": "Sonraki Tur",
+        "next_round": "Sıradaki Tur",
         "locked": "Kilitli",
-        "your_bowl": "Kese",
-        "waiting": "Savaş başlıyor...",
+        "your_bowl": "Sizin Kase",
+        "waiting": "Hamle bekleniyor...",
+        "kept": "Tutuldu",
         "lvl": "Svy",
         "version": "Sürüm"
     },
@@ -26,7 +27,7 @@
         "physical_damage": "{{player}} {{amount}} fiziksel hasar verdi."
     },
     "phases": {
-        "ROLL_PHASE": "Zar Safhası",
+        "ROLL_PHASE": "Zar Aşaması",
         "GOD_FAVOR_PHASE": "Lütuf Seçimi",
         "RESOLUTION_PHASE": "Çatışma Safhası"
     },
