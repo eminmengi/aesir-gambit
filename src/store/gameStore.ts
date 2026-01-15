@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { GameState, PlayerId, PlayerState, DiceFace } from '../types/game';
+import type { GameState, PlayerId, PlayerState, DiceFace, GodFavorId } from '../types/game';
 import { resolveRound } from '../logic/resolution';
 
 // Yardımcı: Rastgele Zar yüzü üret
@@ -22,12 +22,13 @@ const createInitialPlayer = (id: PlayerId): PlayerState => ({
         locked: false,
     })),
     selectedGodFavor: null,
-    equippedGods: ['thors_strike', 'iduns_rejuvenation', 'vidars_might'], // Başlangıç seti
+    equippedGods: [], // Empty initially to trigger Selection Modal
 });
 
 interface GameActions {
     rollDice: (player: PlayerId) => void;
     toggleLock: (player: PlayerId, dieIndex: number) => void;
+    setPlayerGods: (player: PlayerId, godIds: GodFavorId[]) => void;
     selectGodFavor: (player: PlayerId, godId: string, level: 1 | 2 | 3) => void;
     confirmGodFavorSelection: (player: PlayerId) => void;
     advancePhase: () => void;
@@ -79,6 +80,19 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
             };
         });
     },
+
+    setPlayerGods: (playerId, godIds) => {
+        set((state) => ({
+            players: {
+                ...state.players,
+                [playerId]: {
+                    ...state.players[playerId],
+                    equippedGods: godIds
+                }
+            }
+        }));
+    },
+
 
     selectGodFavor: (playerId, godId, level) => {
         // @ts-ignore - ID mismatch fix later

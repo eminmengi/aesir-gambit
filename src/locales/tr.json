@@ -3,6 +3,176 @@
         "title": "Aesir Gambit",
         "fizzle_warning": "Yetersiz Adak! Bu lütuf boşa gidecek.",
         "roll": "Zar At",
-        "end_turn": "Turu Bitir"
+        "end_turn": "Turu Bitir",
+        "next_round": "Sonraki Tur",
+        "locked": "Kilitli",
+        "your_bowl": "Kese",
+        "waiting": "Savaş başlıyor...",
+        "lvl": "Svy",
+        "version": "Sürüm"
+    },
+    "hud": {
+        "jarl": "JARL (Sen)",
+        "rival": "RAKİP",
+        "your_turn": "HAMLE SIRASI SENDE"
+    },
+    "logs": {
+        "token_gain": "P1 {{p1}} token kazandı, P2 {{p2}} token kazandı.",
+        "steal": "P1 {{p1}} token çaldı. P2 {{p2}} token çaldı.",
+        "fizzle": "{{player}}'ın {{god}} lütfu GEÇERSİZ! (Yetersiz token)",
+        "god_used": "{{player}}, {{god}} kullandı (Seviye {{level}}).",
+        "damage_dealt": "{{source}} {{amount}} hasar verdi.",
+        "healed": "{{source}} {{amount}} can iyileştirdi.",
+        "physical_damage": "{{player}} {{amount}} fiziksel hasar verdi."
+    },
+    "phases": {
+        "ROLL_PHASE": "Zar Safhası",
+        "GOD_FAVOR_PHASE": "Lütuf Seçimi",
+        "RESOLUTION_PHASE": "Çatışma Safhası"
+    },
+    "gods": {
+        "select_title": "Himaye Seçimi",
+        "select_subtitle": "Savaşta sana rehberlik edecek 3 Tanrı seç",
+        "start_battle": "Valhalla'ya Yürü",
+        "thors_strike": {
+            "name": "Thor'un Şimşeği",
+            "desc": "Çatışma dindiğinde rakibine ilahi bir darbe indir.",
+            "l1": "2 Hasar ver",
+            "l2": "5 Hasar ver",
+            "l3": "8 Hasar ver"
+        },
+        "iduns_rejuvenation": {
+            "name": "Idun'un Şifası",
+            "desc": "Savaşın yaralarını sar ve yaşam gücünü yenile.",
+            "l1": "2 Can iyileştir",
+            "l2": "4 Can iyileştir",
+            "l3": "6 Can iyileştir"
+        },
+        "vidars_might": {
+            "name": "Vidar'ın Gücü",
+            "desc": "Rakibinin savunmasını kır ve miğferlerini parçala.",
+            "l1": "2 Miğfer sil",
+            "l2": "4 Miğfer sil",
+            "l3": "6 Miğfer sil"
+        },
+        "baldrs_invulnerability": {
+            "name": "Baldr'ın Dokunulmazlığı",
+            "desc": "Eşleşen her zar için Miğfer/Kalkan ekle.",
+            "l1": "Zar başına 1 ekle",
+            "l2": "Zar başına 2 ekle",
+            "l3": "Zar başına 3 ekle"
+        },
+        "skadis_hunt": {
+            "name": "Skadi'nin Avı",
+            "desc": "Atılan her Ok zarı için ekstra Ok kazan.",
+            "l1": "Ok zarı başına +1 Ok",
+            "l2": "Ok zarı başına +2 Ok",
+            "l3": "Ok zarı başına +3 Ok"
+        },
+        "freyrs_plenty": {
+            "name": "Freyr'in Armağanı",
+            "desc": "Çoğunluktaki zarının gücüne güç kat.",
+            "l1": "Toplam değere +2",
+            "l2": "Toplam değere +3",
+            "l3": "Toplam değere +4"
+        },
+        "heimdalls_watch": {
+            "name": "Heimdall'ın Nöbeti",
+            "desc": "Bloklanan her saldırı ile iyileş.",
+            "l1": "Blok başına 1 Can",
+            "l2": "Blok başına 2 Can",
+            "l3": "Blok başına 3 Can"
+        },
+        "tyrs_pledge": {
+            "name": "Tyr'in Yemini",
+            "desc": "Kendi kanınla rakibin adaklarını sil.",
+            "l1": "Feda edilen Can başına 2 Token yok et",
+            "l2": "Feda edilen Can başına 3 Token yok et",
+            "l3": "Feda edilen Can başına 4 Token yok et"
+        },
+        "friggs_sight": {
+            "name": "Frigg'in Görüsü",
+            "desc": "Dilediğin zarları yeniden at.",
+            "l1": "2 zar yeniden at",
+            "l2": "3 zar yeniden at",
+            "l3": "4 zar yeniden at"
+        },
+        "lokis_trick": {
+            "name": "Loki'nin Hilesi",
+            "desc": "Rakibin zarlarını sürgün et.",
+            "l1": "1 zar sil",
+            "l2": "2 zar sil",
+            "l3": "3 zar sil"
+        },
+        "odins_sacrifice": {
+            "name": "Odin'in Fedası",
+            "desc": "Can feda ederek Kudret kazan.",
+            "l1": "Can başına 3 Token kazan",
+            "l2": "Can başına 4 Token kazan",
+            "l3": "Can başına 5 Token kazan"
+        },
+        "hels_grip": {
+            "name": "Hel'in Pençesi",
+            "desc": "Vurduğun Balta hasarı ile beslen.",
+            "l1": "Hasar başına 1 Can çal",
+            "l2": "Hasar başına 2 Can çal",
+            "l3": "Hasar başına 3 Can çal"
+        },
+        "skulds_claim": {
+            "name": "Skuld'un Hakkı",
+            "desc": "Okların rakibinin adaklarını yok etsin.",
+            "l1": "Ok zarı başına 2 Token sil",
+            "l2": "Ok zarı başına 3 Token sil",
+            "l3": "Ok zarı başına 4 Token sil"
+        },
+        "ullrs_aim": {
+            "name": "Ullr'un Nişanı",
+            "desc": "Okların kalkanları delip geçsin.",
+            "l1": "2 Ok savunmayı deler",
+            "l2": "3 Ok savunmayı deler",
+            "l3": "6 Ok savunmayı deler"
+        },
+        "bragis_verve": {
+            "name": "Bragi'nin Şevki",
+            "desc": "El zarları sana ilham (token) versin.",
+            "l1": "El zarı başına 2 Token",
+            "l2": "El zarı başına 3 Token",
+            "l3": "El zarı başına 4 Token"
+        },
+        "mimirs_wisdom": {
+            "name": "Mimir'in Bilgeliği",
+            "desc": "Aldığın her yara seni güçlendirsin.",
+            "l1": "Hasar başına 1 Token",
+            "l2": "Hasar başına 2 Token",
+            "l3": "Hasar başına 3 Token"
+        },
+        "freyjas_plenty": {
+            "name": "Freyja'nın Bereketi",
+            "desc": "Kaderine fazladan zarlar ekle.",
+            "l1": "+1 Ekstra Zar",
+            "l2": "+2 Ekstra Zar",
+            "l3": "+3 Ekstra Zar"
+        },
+        "thrymrs_theft": {
+            "name": "Thrymr'in Hırsızlığı",
+            "desc": "Rakibin Tanrı lütfunu zayıflat.",
+            "l1": "-1 Seviye düşür",
+            "l2": "-2 Seviye düşür",
+            "l3": "-3 Seviye düşür"
+        },
+        "vars_bond": {
+            "name": "Var'ın Bağı",
+            "desc": "Rakibin harcadığı güç seni iyileştirsin.",
+            "l1": "10 harcamaya 1 Can",
+            "l2": "14 harcamaya 2 Can",
+            "l3": "18 harcamaya 3 Can"
+        },
+        "brunhilds_fury": {
+            "name": "Brunhild'in Öfkesi",
+            "desc": "Balta öfken katlanarak büyüsün.",
+            "l1": "Baltalar x1.5 vurur",
+            "l2": "Baltalar x2 vurur",
+            "l3": "Baltalar x3 vurur"
+        }
     }
 }

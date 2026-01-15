@@ -8,16 +8,19 @@ interface PlayerHUDProps {
     isCurrentTurn: boolean;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export const PlayerHUD: React.FC<PlayerHUDProps> = ({ player, isCurrentTurn }) => {
+    const { t } = useTranslation();
     return (
         <div className={`p-4 rounded-xl border-2 transition-colors duration-300 w-full max-w-sm
       ${isCurrentTurn ? 'bg-slate-800 border-viking-gold shadow-[0_0_15px_rgba(212,175,55,0.3)]' : 'bg-slate-900/80 border-slate-700'}
     `}>
             <div className="flex items-center justify-between mb-2">
                 <h2 className={`font-serif text-lg font-bold ${isCurrentTurn ? 'text-viking-gold' : 'text-slate-400'}`}>
-                    {player.id === 'player' ? 'JARL (You)' : 'RIVAL'}
+                    {player.id === 'player' ? t('hud.jarl') : t('hud.rival')}
                 </h2>
-                {isCurrentTurn && <span className="text-xs text-viking-gold animate-pulse">YOUR TURN</span>}
+                {isCurrentTurn && <span className="text-xs text-viking-gold animate-pulse">{t('hud.your_turn')}</span>}
             </div>
 
             <div className="flex gap-4">

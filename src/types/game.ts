@@ -65,13 +65,19 @@ export interface PlayerState {
     equippedGods: GodFavorId[]; // Max 3
 }
 
+export interface LogEntry {
+    key: string;
+    params?: Record<string, any>;
+}
+
 export interface GameState {
-    phase: Phase;
+    phase: Phase; // Assuming GamePhase was a typo and should be Phase based on existing type
     currentTurn: PlayerId;
     rollCount: number; // 0-3
     players: {
-        [key in PlayerId]: PlayerState;
+        player: PlayerState;
+        opponent: PlayerState;
     };
     winner: PlayerId | null;
-    logs?: string[];
+    logs: LogEntry[];
 }

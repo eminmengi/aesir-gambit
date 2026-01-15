@@ -3,6 +3,176 @@
         "title": "Aesir Gambit",
         "fizzle_warning": "Insufficient Tokens! This favor will fizzle.",
         "roll": "Roll Dice",
-        "end_turn": "End Turn"
+        "end_turn": "End Turn",
+        "next_round": "Next Round",
+        "locked": "Locked",
+        "your_bowl": "Your Bowl",
+        "waiting": "The battle awaits...",
+        "lvl": "lvl",
+        "version": "Version"
+    },
+    "hud": {
+        "jarl": "JARL (You)",
+        "rival": "RIVAL",
+        "your_turn": "YOUR TURN"
+    },
+    "logs": {
+        "token_gain": "P1 gained {{p1}} tokens, P2 gained {{p2}} tokens.",
+        "steal": "P1 stole {{p1}} tokens. P2 stole {{p2}} tokens.",
+        "fizzle": "{{player}}'s {{god}} FIZZLED! (Not enough tokens)",
+        "god_used": "{{player}} used {{god}} (Level {{level}}).",
+        "damage_dealt": "{{source}} dealt {{amount}} damage.",
+        "healed": "{{source}} healed {{amount}} HP.",
+        "physical_damage": "{{player}} dealt {{amount}} physical damage."
+    },
+    "phases": {
+        "ROLL_PHASE": "Roll Phase",
+        "GOD_FAVOR_PHASE": "God Favor Phase",
+        "RESOLUTION_PHASE": "Resolution Phase"
+    },
+    "gods": {
+        "select_title": "Choose Your Patrons",
+        "select_subtitle": "Select 3 Gods to aid you in battle",
+        "start_battle": "Start Battle",
+        "thors_strike": {
+            "name": "Thor's Strike",
+            "desc": "Deal damage after resolution.",
+            "l1": "Deal 2 damage",
+            "l2": "Deal 5 damage",
+            "l3": "Deal 8 damage"
+        },
+        "iduns_rejuvenation": {
+            "name": "Idun's Rejuvenation",
+            "desc": "Heal health after resolution.",
+            "l1": "Heal 2 health",
+            "l2": "Heal 4 health",
+            "l3": "Heal 6 health"
+        },
+        "vidars_might": {
+            "name": "Vidar's Might",
+            "desc": "Remove enemy helmets.",
+            "l1": "Remove 2 helmets",
+            "l2": "Remove 4 helmets",
+            "l3": "Remove 6 helmets"
+        },
+        "baldrs_invulnerability": {
+            "name": "Baldr's Invulnerability",
+            "desc": "Add Helmets/Shields for each matching die.",
+            "l1": "Add 1 per die",
+            "l2": "Add 2 per die",
+            "l3": "Add 3 per die"
+        },
+        "skadis_hunt": {
+            "name": "Skadi's Hunt",
+            "desc": "Add Arrows for each Arrow die rolled.",
+            "l1": "Add 1 Arrow per Arrow die",
+            "l2": "Add 2 Arrows per Arrow die",
+            "l3": "Add 3 Arrows per Arrow die"
+        },
+        "freyrs_plenty": {
+            "name": "Freyr's Gift",
+            "desc": "Add to the total of the majority die face.",
+            "l1": "Add 2 to total",
+            "l2": "Add 3 to total",
+            "l3": "Add 4 to total"
+        },
+        "heimdalls_watch": {
+            "name": "Heimdall's Watch",
+            "desc": "Heal for each blocked attack.",
+            "l1": "Heal 1 per block",
+            "l2": "Heal 2 per block",
+            "l3": "Heal 3 per block"
+        },
+        "tyrs_pledge": {
+            "name": "Tyr's Pledge",
+            "desc": "Sacrifice HP to destroy opponent's tokens.",
+            "l1": "Destroy 2 tokens per HP",
+            "l2": "Destroy 3 tokens per HP",
+            "l3": "Destroy 4 tokens per HP"
+        },
+        "friggs_sight": {
+            "name": "Frigg's Sight",
+            "desc": "Re-roll any dice.",
+            "l1": "Re-roll 2 dice",
+            "l2": "Re-roll 3 dice",
+            "l3": "Re-roll 4 dice"
+        },
+        "lokis_trick": {
+            "name": "Loki's Trick",
+            "desc": "Banish opponent's dice.",
+            "l1": "Banish 1 die",
+            "l2": "Banish 2 dice",
+            "l3": "Banish 3 dice"
+        },
+        "odins_sacrifice": {
+            "name": "Odin's Sacrifice",
+            "desc": "Sacrifice Health tokens for God Tokens.",
+            "l1": "Gain 3 Tokens per Health",
+            "l2": "Gain 4 Tokens per Health",
+            "l3": "Gain 5 Tokens per Health"
+        },
+        "hels_grip": {
+            "name": "Hel's Grip",
+            "desc": "Heal for each Axe damage dealt.",
+            "l1": "Heal 1 HP per damage",
+            "l2": "Heal 2 HP per damage",
+            "l3": "Heal 3 HP per damage"
+        },
+        "skulds_claim": {
+            "name": "Skuld's Claim",
+            "desc": "Destroy tokens for each Arrow die rolled.",
+            "l1": "-2 Tokens per Arrow die",
+            "l2": "-3 Tokens per Arrow die",
+            "l3": "-4 Tokens per Arrow die"
+        },
+        "ullrs_aim": {
+            "name": "Ullr's Aim",
+            "desc": "Arrows ignore shields.",
+            "l1": "2 Arrows ignore shield",
+            "l2": "3 Arrows ignore shield",
+            "l3": "6 Arrows ignore shield"
+        },
+        "bragis_verve": {
+            "name": "Bragi's Verve",
+            "desc": "Gain tokens for each Hand die rolled.",
+            "l1": "Gain 2 per Hand die",
+            "l2": "Gain 3 per Hand die",
+            "l3": "Gain 4 per Hand die"
+        },
+        "mimirs_wisdom": {
+            "name": "Mimir's Wisdom",
+            "desc": "Gain tokens for each damage taken.",
+            "l1": "Gain 1 per damage",
+            "l2": "Gain 2 per damage",
+            "l3": "Gain 3 per damage"
+        },
+        "freyjas_plenty": {
+            "name": "Freyja's Plenty",
+            "desc": "Roll additional dice this round.",
+            "l1": "Roll +1 die",
+            "l2": "Roll +2 dice",
+            "l3": "Roll +3 dice"
+        },
+        "thrymrs_theft": {
+            "name": "Thrymr's Theft",
+            "desc": "Reduce opponent's God Favor level.",
+            "l1": "-1 Level",
+            "l2": "-2 Levels",
+            "l3": "-3 Levels"
+        },
+        "vars_bond": {
+            "name": "Var's Bond",
+            "desc": "Heal based on tokens spent by opponent.",
+            "l1": "Heal 1 per 10 spent",
+            "l2": "Heal 1 per 14 spent? No, +2 Heal per 14 spent?",
+            "l3": "Heal +3 per 18 spent?"
+        },
+        "brunhilds_fury": {
+            "name": "Brunhild's Fury",
+            "desc": "Multiply Axe faces.",
+            "l1": "x1.5 Axes",
+            "l2": "x2 Axes",
+            "l3": "x3 Axes"
+        }
     }
 }
