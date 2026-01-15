@@ -102,14 +102,12 @@ export const Dice3D: React.FC<Dice3DProps> = ({ face, locked, onClick, rolling, 
     const CubeFace = ({
         style,
         className,
-        children,
         isFront = false,
         type,
         hasToken = false
     }: {
         style?: React.CSSProperties,
         className?: string,
-        children?: React.ReactNode,
         isFront?: boolean,
         type: DiceType,
         hasToken?: boolean

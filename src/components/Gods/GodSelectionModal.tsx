@@ -147,28 +147,34 @@ const CheckIcon = ({ className }: { className?: string }) => (
     </svg>
 );
 
-import { ThorHammerIcon, RavenIcon, WolfHeadIcon, ShinyAppleIcon, RuneStoneIcon } from '../Icons/VikingIcons';
+import {
+    ThorHammerIcon, WolfHeadIcon, RuneStoneIcon,
+    HuntingHornIcon, SnakeIcon, SnowflakeIcon, CrossedSwordsIcon,
+    SkullIcon, OakLeafIcon, SunIcon, BoarIcon, SpiderWebIcon,
+    QuiverIcon, HarpIcon, DropIcon, GemNecklaceIcon, TrollIcon,
+    KeyIcon, EyeShieldIcon, KnotIcon, WingedEmblemIcon
+} from '../Icons/VikingIcons';
 
 // Map God IDs to Viking Icons for visual flair
 const GOD_ICONS: Record<string, React.FC<{ size?: number, className?: string }>> = {
     'thors_strike': ThorHammerIcon,
-    'iduns_rejuvenation': ShinyAppleIcon,
+    'iduns_rejuvenation': OakLeafIcon,
     'vidars_might': WolfHeadIcon,
-    'baldrs_invulnerability': RuneStoneIcon,
-    'skadis_hunt': WolfHeadIcon,
-    'freyrs_plenty': ShinyAppleIcon,
-    'skulds_claim': RavenIcon,
-    'ullrs_aim': ThorHammerIcon,
-    'heimdalls_watch': RuneStoneIcon,
-    'friggs_sight': RavenIcon,
-    'bragis_verve': RuneStoneIcon,
-    'mimirs_wisdom': RuneStoneIcon,
-    'hels_grip': RavenIcon,
-    'freyjas_plenty': ShinyAppleIcon,
-    'lokis_trick': WolfHeadIcon,
-    'thrymrs_theft': RavenIcon,
-    'vars_bond': RuneStoneIcon,
-    'brunhilds_fury': ThorHammerIcon,
-    'tyrs_pledge': WolfHeadIcon,
-    'odins_sacrifice': RavenIcon,
+    'baldrs_invulnerability': SunIcon,
+    'skadis_hunt': SnowflakeIcon,
+    'freyrs_plenty': BoarIcon,
+    'skulds_claim': SpiderWebIcon,
+    'ullrs_aim': QuiverIcon,
+    'heimdalls_watch': HuntingHornIcon,
+    'friggs_sight': KeyIcon,
+    'bragis_verve': HarpIcon,
+    'mimirs_wisdom': DropIcon,
+    'hels_grip': SkullIcon,
+    'freyjas_plenty': GemNecklaceIcon,
+    'lokis_trick': SnakeIcon,
+    'thrymrs_theft': TrollIcon,
+    'vars_bond': KnotIcon,
+    'brunhilds_fury': WingedEmblemIcon,
+    'tyrs_pledge': CrossedSwordsIcon,
+    'odins_sacrifice': EyeShieldIcon,
 };

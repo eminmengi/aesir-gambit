@@ -3,29 +3,35 @@ import { GODS } from '../../data/gods';
 import type { GodFavorId } from '../../types/game';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { ThorHammerIcon, RavenIcon, WolfHeadIcon, ShinyAppleIcon, RuneStoneIcon } from '../Icons/VikingIcons';
+import {
+    ThorHammerIcon, WolfHeadIcon,
+    HuntingHornIcon, SnakeIcon, SnowflakeIcon, CrossedSwordsIcon,
+    SkullIcon, OakLeafIcon, SunIcon, BoarIcon, SpiderWebIcon,
+    QuiverIcon, HarpIcon, DropIcon, GemNecklaceIcon, TrollIcon,
+    KeyIcon, EyeShieldIcon, KnotIcon, WingedEmblemIcon
+} from '../Icons/VikingIcons';
 
 const GOD_ICONS: Record<string, React.FC<{ size?: number, className?: string }>> = {
     'thors_strike': ThorHammerIcon,
-    'iduns_rejuvenation': ShinyAppleIcon,
-    'vidars_might': WolfHeadIcon, // Vidar killed Fenrir (Wolf)
-    'baldrs_invulnerability': RuneStoneIcon, // General protection
-    'skadis_hunt': WolfHeadIcon, // Hunt -> Wolf
-    'freyrs_plenty': ShinyAppleIcon, // Fertility -> Apple
-    'skulds_claim': RavenIcon, // Fate -> Raven
-    'ullrs_aim': ThorHammerIcon, // Combat/Hunt -> Hammer/Weapon (Placeholder)
-    'heimdalls_watch': RuneStoneIcon, // Guardian
-    'friggs_sight': RavenIcon, // Sight -> Raven
-    'bragis_verve': RuneStoneIcon, // Poetry/Inspiration
-    'mimirs_wisdom': RuneStoneIcon, // Wisdom -> Rune
-    'hels_grip': RavenIcon, // Underworld
-    'freyjas_plenty': ShinyAppleIcon, // Fertility
-    'lokis_trick': WolfHeadIcon, // Trickster -> Wolf (Fenrir's father)
-    'thrymrs_theft': RavenIcon, // Theft
-    'vars_bond': RuneStoneIcon, // Oaths
-    'brunhilds_fury': ThorHammerIcon, // Valkyrie -> War
-    'tyrs_pledge': WolfHeadIcon, // Tyr & Fenrir
-    'odins_sacrifice': RavenIcon, // Odin -> Raven
+    'iduns_rejuvenation': OakLeafIcon,
+    'vidars_might': WolfHeadIcon,
+    'baldrs_invulnerability': SunIcon,
+    'skadis_hunt': SnowflakeIcon,
+    'freyrs_plenty': BoarIcon,
+    'skulds_claim': SpiderWebIcon,
+    'ullrs_aim': QuiverIcon,
+    'heimdalls_watch': HuntingHornIcon,
+    'friggs_sight': KeyIcon,
+    'bragis_verve': HarpIcon,
+    'mimirs_wisdom': DropIcon, // Water from the well
+    'hels_grip': SkullIcon,
+    'freyjas_plenty': GemNecklaceIcon,
+    'lokis_trick': SnakeIcon,
+    'thrymrs_theft': TrollIcon,
+    'vars_bond': KnotIcon,
+    'brunhilds_fury': WingedEmblemIcon, // Valkyrie wings
+    'tyrs_pledge': CrossedSwordsIcon,
+    'odins_sacrifice': EyeShieldIcon,
 };
 
 interface GodFavorButtonProps {

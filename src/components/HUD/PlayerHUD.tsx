@@ -1,6 +1,6 @@
 import React from 'react';
 import type { PlayerState } from '../../types/game';
-import { Heart, Coins } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { GodFavorButton } from './GodFavorButton';
