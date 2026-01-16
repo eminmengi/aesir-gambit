@@ -178,8 +178,14 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
                     player: result.newP1State,
                     opponent: result.newP2State
                 },
-                logs: result.logs
+                logs: result.logs,
+                winner: result.winner
             });
+
+            if (result.winner) {
+                set({ phase: 'GAME_OVER' });
+                return;
+            }
 
             return;
         }

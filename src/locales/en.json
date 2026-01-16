@@ -8,8 +8,21 @@
         "locked": "Locked",
         "your_bowl": "Your Bowl",
         "waiting": "The battle awaits...",
+        "kept": "Kept",
         "lvl": "lvl",
-        "version": "Version"
+        "version": "Version",
+        "victory": "VICTORY!",
+        "defeat": "DEFEAT...",
+        "victory_desc": "Valhalla awaits!",
+        "defeat_desc": "Fallen, but not forgotten.",
+        "play_again": "Play Again"
+    },
+    "themes": {
+        "title": "Atmosphere",
+        "snow": "Snow",
+        "rain": "Rain",
+        "ember": "Ember",
+        "clear": "Clear"
     },
     "hud": {
         "jarl": "JARL (You)",
@@ -23,7 +36,8 @@
         "god_used": "{{player}} used {{god}} (Level {{level}}).",
         "damage_dealt": "{{source}} dealt {{amount}} damage.",
         "healed": "{{source}} healed {{amount}} HP.",
-        "physical_damage": "{{player}} dealt {{amount}} physical damage."
+        "physical_damage": "{{player}} dealt {{amount}} physical damage.",
+        "draw": "The battle ends in a DRAW!"
     },
     "phases": {
         "ROLL_PHASE": "Roll Phase",
@@ -164,8 +178,8 @@
             "name": "Var's Bond",
             "desc": "Heal based on tokens spent by opponent.",
             "l1": "Heal 1 per 10 spent",
-            "l2": "Heal 1 per 14 spent? No, +2 Heal per 14 spent?",
-            "l3": "Heal +3 per 18 spent?"
+            "l2": "Heal 2 per 14 spent",
+            "l3": "Heal 3 per 18 spent"
         },
         "brunhilds_fury": {
             "name": "Brunhild's Fury",

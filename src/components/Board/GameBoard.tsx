@@ -6,6 +6,32 @@ import { GodSelectionModal } from '../Gods/GodSelectionModal';
 import { useTranslation } from 'react-i18next';
 import { Settings, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { AnimationController } from '../Effects/AnimationController';
+import { DynamicBackground } from '../Effects/DynamicBackground';
+
+import { GameOverModal } from '../Modals/GameOverModal';
+import { CloudSnow, CloudRain, Flame, Sun, Trees, Box, Moon } from 'lucide-react';
+
+// Available themes
+type WeatherTheme = 'snow' | 'rain' | 'ember' | 'clear';
+type BackgroundTheme = 'wood' | 'stone' | 'dark';
+
+// CSS Patterns for backgrounds (More reliable than external images)
+const BG_STYLES: Record<BackgroundTheme, React.CSSProperties> = {
+    wood: {
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://www.transparenttextures.com/patterns/wood-pattern.png')`,
+        backgroundBlendMode: 'overlay',
+        backgroundColor: '#3d2b1f'
+    },
+    stone: {
+        // Fallback to a dark noise if image fails, but trying a better source or style
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://www.transparenttextures.com/patterns/black-scales.png')`,
+        backgroundColor: '#1c1c1c'
+    },
+    dark: {
+        background: 'linear-gradient(to bottom, #0f172a, #000000)'
+    }
+};
 
 export const GameBoard: React.FC = () => {
     const {
@@ -22,7 +48,10 @@ export const GameBoard: React.FC = () => {
     } = useGameStore();
 
     const [isRolling, setIsRolling] = React.useState(false);
+    const [isOpponentRolling, setIsOpponentRolling] = React.useState(false);
     const [showSettings, setShowSettings] = useState(false);
+    const [weather, setWeather] = useState<WeatherTheme>('snow');
+    const [bgTheme, setBgTheme] = useState<BackgroundTheme>('wood');
     const { t, i18n } = useTranslation();
 
     const handleRoll = () => {
@@ -44,11 +73,27 @@ export const GameBoard: React.FC = () => {
     // AI Turn Simulation
     useEffect(() => {
         if (currentTurn === 'opponent' && phase === 'ROLL_PHASE') {
-            const timer = setTimeout(() => {
-                rollDice('opponent');
-                advancePhase();
-            }, 1500);
-            return () => clearTimeout(timer);
+            // 1. Wait a bit before starting action
+            const startTimer = setTimeout(() => {
+                setIsOpponentRolling(true);
+
+                // 2. Roll Animation Duration
+                const rollTimer = setTimeout(() => {
+                    rollDice('opponent');
+                    setIsOpponentRolling(false);
+
+                    // 3. Wait for user to see result before ending turn
+                    const endTimer = setTimeout(() => {
+                        advancePhase();
+                    }, 1000);
+
+                    return () => clearTimeout(endTimer);
+                }, 1000); // 1s rolling animation
+
+                return () => clearTimeout(rollTimer);
+            }, 500); // 0.5s think time
+
+            return () => clearTimeout(startTimer);
         }
     }, [currentTurn, phase, rollDice, advancePhase]);
 
@@ -56,11 +101,23 @@ export const GameBoard: React.FC = () => {
     const p2 = players.opponent;
 
     return (
-        <div className="min-h-screen bg-[#1a1c20] flex flex-col items-center justify-between p-6 relative overflow-hidden font-sans select-none">
+        <div
+            className="min-h-screen flex flex-col items-center justify-between p-6 relative overflow-hidden font-sans select-none transition-all duration-700"
+            style={BG_STYLES[bgTheme]}
+        >
 
-            {/* Ambient Background Effects */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-800/20 via-[#1a1c20] to-[#0f1115] pointer-events-none" />
-            <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')] pointer-events-none mix-blend-overlay" />
+            {/* Ambient Lighting Overlay based on Weather */}
+            <div className={`absolute inset-0 transition-opacity duration-1000 pointer-events-none mix-blend-soft-light
+                ${weather === 'snow' ? 'bg-blue-200/5' : ''}
+                ${weather === 'ember' ? 'bg-orange-500/10' : ''}
+                ${weather === 'rain' ? 'bg-blue-900/20' : ''}
+            `} />
+
+            <DynamicBackground weather={weather} />
+
+            <AnimationController />
+
+            {phase === 'GAME_OVER' && <GameOverModal />}
 
             {/* --- MODALS --- */}
             {showGodSelection && (
@@ -82,17 +139,74 @@ export const GameBoard: React.FC = () => {
                             initial={{ opacity: 0, y: -10, scale: 0.95 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                            className="absolute top-14 right-0 w-48 bg-[#15171b] border border-viking-gold/20 rounded-xl shadow-2xl p-2 flex flex-col gap-1 backdrop-blur-xl"
+                            className="absolute top-14 right-0 w-72 bg-[#15171b]/95 border border-viking-gold/20 rounded-xl shadow-2xl p-4 flex flex-col gap-4 backdrop-blur-xl"
                         >
+                            {/* Language Toggle */}
                             <button
                                 onClick={toggleLanguage}
-                                className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-lg text-stone-300 hover:text-white transition-colors text-sm font-serif"
+                                className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg text-stone-300 hover:text-white transition-colors text-sm font-serif border border-white/5"
                             >
                                 <Globe className="w-4 h-4 text-viking-gold" />
                                 <span>{i18n.language === 'tr' ? 'English' : 'Türkçe'}</span>
                             </button>
-                            <div className="px-4 py-2 text-xs text-stone-600 border-t border-white/5 mt-1 pt-2 text-center uppercase tracking-widest">
-                                Version 0.4.1
+
+                            {/* Weather Selector */}
+                            <div>
+                                <div className="text-[10px] text-stone-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                    {t('themes.title')}
+                                </div>
+                                <div className="grid grid-cols-4 gap-2">
+                                    {(['snow', 'rain', 'ember', 'clear'] as WeatherTheme[]).map((w) => (
+                                        <button
+                                            key={w}
+                                            onClick={() => setWeather(w)}
+                                            className={`
+                                                flex items-center justify-center p-3 rounded-lg border transition-all
+                                                ${weather === w
+                                                    ? 'bg-viking-gold/20 border-viking-gold text-viking-gold shadow-[0_0_10px_rgba(212,175,55,0.2)]'
+                                                    : 'bg-black/40 border-transparent text-stone-500 hover:bg-white/5 hover:text-stone-300'}
+                                            `}
+                                            title={t(`themes.${w}`)}
+                                        >
+                                            {w === 'snow' && <CloudSnow size={18} />}
+                                            {w === 'rain' && <CloudRain size={18} />}
+                                            {w === 'ember' && <Flame size={18} />}
+                                            {w === 'clear' && <Sun size={18} />}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Background Texture Selector */}
+                            <div>
+                                <div className="text-[10px] text-stone-500 uppercase tracking-widest mb-2">Zemin / Doku</div>
+                                <div className="grid grid-cols-3 gap-2">
+                                    <button
+                                        onClick={() => setBgTheme('wood')}
+                                        className={`flex flex-col items-center gap-1 p-2 rounded border transition-all ${bgTheme === 'wood' ? 'bg-viking-gold/20 border-viking-gold text-viking-gold' : 'bg-black/40 border-transparent text-stone-500'}`}
+                                    >
+                                        <Trees size={16} />
+                                        <span className="text-[10px]">Ahşap</span>
+                                    </button>
+                                    <button
+                                        onClick={() => setBgTheme('stone')}
+                                        className={`flex flex-col items-center gap-1 p-2 rounded border transition-all ${bgTheme === 'stone' ? 'bg-viking-gold/20 border-viking-gold text-viking-gold' : 'bg-black/40 border-transparent text-stone-500'}`}
+                                    >
+                                        <Box size={16} />
+                                        <span className="text-[10px]">Taş</span>
+                                    </button>
+                                    <button
+                                        onClick={() => setBgTheme('dark')}
+                                        className={`flex flex-col items-center gap-1 p-2 rounded border transition-all ${bgTheme === 'dark' ? 'bg-viking-gold/20 border-viking-gold text-viking-gold' : 'bg-black/40 border-transparent text-stone-500'}`}
+                                    >
+                                        <Moon size={16} />
+                                        <span className="text-[10px]">Koyu</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="text-[10px] text-stone-700 text-center uppercase tracking-widest pt-2 border-t border-white/5">
+                                v0.4.4
                             </div>
                         </motion.div>
                     )}
@@ -110,7 +224,7 @@ export const GameBoard: React.FC = () => {
                                 key={die.id}
                                 face={die.face}
                                 locked={die.locked}
-                                rolling={false}
+                                rolling={isOpponentRolling && !die.locked}
                                 disabled={true}
                             />
                         ))}

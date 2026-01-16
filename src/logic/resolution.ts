@@ -5,6 +5,7 @@ interface ResolutionResult {
     newP1State: PlayerState;
     newP2State: PlayerState;
     logs: LogEntry[];
+    winner: 'player' | 'opponent' | null;
 }
 
 export const resolveRound = (
@@ -296,13 +297,15 @@ export const resolveRound = (
     if (successfulGods.p1?.id === 'bragis_verve') p1State.tokens += p1Counts.hands * successfulGods.p1.data.effectValue;
     if (successfulGods.p2?.id === 'bragis_verve') p2State.tokens += p2Counts.hands * successfulGods.p2.data.effectValue;
 
-    // Var (Heal per opponent spend) - Fixed: Heal 1 per 5 tokens spent
+    // Var (Heal per opponent spend) 
     if (successfulGods.p1?.id === 'vars_bond') {
-        const heal = Math.floor(tokensSpent.p2 / 5) * successfulGods.p1.data.effectValue;
+        const threshold = successfulGods.p1.levelIdx === 0 ? 10 : successfulGods.p1.levelIdx === 1 ? 14 : 18;
+        const heal = Math.floor(tokensSpent.p2 / threshold) * successfulGods.p1.data.effectValue;
         p1State.health = Math.min(p1State.maxHealth, p1State.health + heal);
     }
     if (successfulGods.p2?.id === 'vars_bond') {
-        const heal = Math.floor(tokensSpent.p1 / 5) * successfulGods.p2.data.effectValue;
+        const threshold = successfulGods.p2.levelIdx === 0 ? 10 : successfulGods.p2.levelIdx === 1 ? 14 : 18;
+        const heal = Math.floor(tokensSpent.p1 / threshold) * successfulGods.p2.data.effectValue;
         p2State.health = Math.min(p2State.maxHealth, p2State.health + heal);
     }
 
@@ -348,5 +351,35 @@ export const resolveRound = (
         }
     }
 
-    return { newP1State: p1State, newP2State: p2State, logs };
+    // 7. WINNER CHECK
+    let winner: 'player' | 'opponent' | null = null;
+    if (p1State.health <= 0 && p2State.health <= 0) {
+        // Draw? Or priority? Or whoever has more health was reduced later?
+        // Orlog rules: Simultaneous death -> Draw or specific tiebreaker.
+        // For now, let's say Draw -> Null? Or maybe the one who went below 0 less?
+        // Let's implement: If both die, Opponent wins (Hard mode) or Draw (Null).
+        // Let's assume Draw for now, but UI should handle it.
+        // Let's prefer 'player' if they killed opponent, but if they died too...
+        // Actually, let's keep it null for Draw or add 'draw'. 
+        // For simplicity: If p2 dead, p1 wins. If p1 dead, p2 wins.
+        // If both: Draw.
+        if (p1State.health === p2State.health) {
+            // Absolute tie
+            logs.push({ key: 'logs.draw' });
+        } else if (p1State.health > p2State.health) {
+            winner = 'player';
+        } else {
+            winner = 'opponent';
+        }
+    } else if (p1State.health <= 0) {
+        winner = 'opponent';
+    } else if (p2State.health <= 0) {
+        winner = 'player';
+    }
+
+    if (winner) {
+        logs.push({ key: 'logs.game_over', params: { winner: winner === 'player' ? 'Player' : 'Opponent' } });
+    }
+
+    return { newP1State: p1State, newP2State: p2State, logs, winner };
 };

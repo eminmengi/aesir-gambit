@@ -10,7 +10,19 @@
         "waiting": "Hamle bekleniyor...",
         "kept": "Tutuldu",
         "lvl": "Svy",
-        "version": "Sürüm"
+        "version": "Sürüm",
+        "victory": "ZAFER!",
+        "defeat": "YENİLGİ...",
+        "victory_desc": "Valhalla Salonları seni bekliyor!",
+        "defeat_desc": "Düştün ancak unutulmadın.",
+        "play_again": "Tekrar Oyna"
+    },
+    "themes": {
+        "title": "Atmosfer",
+        "snow": "Kar",
+        "rain": "Yağmur",
+        "ember": "Köz",
+        "clear": "Açık"
     },
     "hud": {
         "jarl": "JARL (Sen)",
@@ -24,7 +36,8 @@
         "god_used": "{{player}}, {{god}} kullandı (Seviye {{level}}).",
         "damage_dealt": "{{source}} {{amount}} hasar verdi.",
         "healed": "{{source}} {{amount}} can iyileştirdi.",
-        "physical_damage": "{{player}} {{amount}} fiziksel hasar verdi."
+        "physical_damage": "{{player}} {{amount}} fiziksel hasar verdi.",
+        "draw": "Savaş BERABERE bitti!"
     },
     "phases": {
         "ROLL_PHASE": "Zar Aşaması",
