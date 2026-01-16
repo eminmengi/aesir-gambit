@@ -31,6 +31,7 @@ interface GameActions {
     setPlayerGods: (player: PlayerId, godIds: GodFavorId[]) => void;
     selectGodFavor: (player: PlayerId, godId: string, level: 0 | 1 | 2 | 3) => void;
     confirmGodFavorSelection: (player: PlayerId) => void;
+    setOpponentDice: (faces: DiceFace[]) => void;
     advancePhase: () => void;
     resetGame: () => void;
 }
@@ -126,6 +127,28 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
         // For now, we just wait for the button press.
         // If It's Multiplayer/AI, we need a "ready" state.
         // Simplification: Direct advance for now managed by UI or AI controller.
+    },
+
+    setOpponentDice: (faces) => {
+        set((state) => {
+            const diceWithIds = faces.map((face, i) => ({
+                id: `opp-${state.rollCount}-${i}`,
+                face,
+                locked: true, // Auto-lock final decision
+                rolling: false
+            }));
+
+            return {
+                hasRolled: true,
+                players: {
+                    ...state.players,
+                    opponent: {
+                        ...state.players.opponent,
+                        dice: diceWithIds
+                    }
+                }
+            };
+        });
     },
 
     advancePhase: () => {

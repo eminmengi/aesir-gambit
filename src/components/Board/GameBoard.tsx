@@ -11,6 +11,7 @@ import { DynamicBackground } from '../Effects/DynamicBackground';
 
 import { GameOverModal } from '../Modals/GameOverModal';
 import { CloudSnow, CloudRain, Flame, Sun, Trees, Box, Moon } from 'lucide-react';
+import { AIController } from '../../logic/ai/AIController';
 
 // Available themes
 type WeatherTheme = 'snow' | 'rain' | 'ember' | 'clear';
@@ -70,32 +71,44 @@ export const GameBoard: React.FC = () => {
     // Auto-open God Selection if gods are not equipped
     const showGodSelection = players.player.equippedGods.length === 0;
 
-    // AI Turn Simulation
+    // AI Turn Simulation (Jomsviking Level)
     useEffect(() => {
         if (currentTurn === 'opponent' && phase === 'ROLL_PHASE') {
-            // 1. Wait a bit before starting action
-            const startTimer = setTimeout(() => {
-                setIsOpponentRolling(true);
+            setIsOpponentRolling(true);
 
-                // 2. Roll Animation Duration
+            // 1. Thinking Time (Short delay for realism)
+            const thinkTimer = setTimeout(() => {
+
+                // 2. Perform AI Calculation
+                const state = useGameStore.getState();
+                const smartHand = AIController.simulateTurn(state);
+                const godDecision = AIController.decideGodFavor(state);
+
+                // 3. Rolling Animation Duration
                 const rollTimer = setTimeout(() => {
-                    rollDice('opponent');
+                    // Apply AI decisions
+                    state.setOpponentDice(smartHand);
+
+                    if (godDecision) {
+                        state.selectGodFavor('opponent', godDecision.godId, godDecision.level);
+                    }
+
                     setIsOpponentRolling(false);
 
-                    // 3. Wait for user to see result before ending turn
+                    // 4. End Turn
                     const endTimer = setTimeout(() => {
                         advancePhase();
                     }, 1000);
 
                     return () => clearTimeout(endTimer);
-                }, 1000); // 1s rolling animation
+                }, 1200); // 1.2s rolling animation
 
                 return () => clearTimeout(rollTimer);
-            }, 500); // 0.5s think time
+            }, 800);
 
-            return () => clearTimeout(startTimer);
+            return () => clearTimeout(thinkTimer);
         }
-    }, [currentTurn, phase, rollDice, advancePhase]);
+    }, [currentTurn, phase, advancePhase]);
 
     const p1 = players.player;
     const p2 = players.opponent;
