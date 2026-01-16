@@ -17,6 +17,15 @@
         "defeat_desc": "Düştün ancak unutulmadın.",
         "play_again": "Tekrar Oyna"
     },
+    "ai": {
+        "difficulty_title": "Yapay Zeka Seviyesi",
+        "easy": "Kolay (Yeşil)",
+        "medium": "Normal (Sarı)",
+        "hard": "Jomsviking (Kırmızı)",
+        "easy_desc": "Acemi savaşçı. Hatalar yapabilir, sadece hazineye odaklanır.",
+        "medium_desc": "Deneyimli Viking. Dengeli saldırır ve savunur.",
+        "hard_desc": "Efsanevi Jomsviking. Acımasız, hesapçı ve ölümcül."
+    },
     "themes": {
         "title": "Atmosfer",
         "snow": "Kar",

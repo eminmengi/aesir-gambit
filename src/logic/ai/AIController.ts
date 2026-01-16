@@ -20,8 +20,8 @@ export class AIController {
         const ai = currentState.players.opponent;
         const player = currentState.players.player;
 
-        // 1. Determine Needs (Weights)
-        const weights = this.calculateWeights(ai, player);
+        // 1. Determine Needs (Weights) based on Difficulty
+        const weights = this.calculateWeights(ai, player, currentState.aiDifficulty);
 
         // 2. Simulation Loop (3 Rolls)
         let currentHand: DiceFace[] = [];
@@ -94,34 +94,57 @@ export class AIController {
         };
     }
 
-    private static calculateWeights(ai: PlayerState, player: PlayerState): Weights {
+    private static calculateWeights(ai: PlayerState, player: PlayerState, difficulty: 'easy' | 'medium' | 'hard'): Weights {
         const w: Weights = { axe: 1, arrow: 1, helmet: 1, shield: 1, hand: 1, tokenBonus: 2 };
 
-        // 1. Survival Mode
+        // EASY: Minimal strategy, mostly random or simple greed
+        if (difficulty === 'easy') {
+            w.tokenBonus = 3; // Loves shiny things
+            w.axe = 1.2;
+            return w;
+        }
+
+        // MED/HARD Common: Basic Survival
         if (ai.health <= 5) {
-            w.helmet += 3;
-            w.shield += 3;
-            w.hand += 2; // Steal tokens to prevent enemy gods
+            w.helmet += 2;
+            w.shield += 2;
+        }
+
+        // MEDIUM: Balanced, some reactiveness
+        if (difficulty === 'medium') {
+            if (ai.tokens < 5) w.tokenBonus += 1;
+            return w;
+        }
+
+        // HARD (Jomsviking): Full Context Awareness
+
+        // 1. Critical Survival (Overwrites basic)
+        if (ai.health <= 5) {
+            w.helmet += 1; // Total +3
+            w.shield += 1; // Total +3
+            w.hand += 2; // Steal to deny god powers
         }
 
         // 2. Kill Mode
         if (player.health <= 4) {
             w.axe += 3;
             w.arrow += 3;
+            w.helmet -= 1; // Aggressive
+            w.shield -= 1;
         }
 
-        // 3. Economy Mode (Early game)
-        if (ai.tokens < 5 && ai.health > 10) {
-            w.tokenBonus += 3; // Heavily prioritize dotted dice
+        // 3. Economy & Scaling
+        if (ai.tokens < 8 && ai.health > 8) {
+            w.tokenBonus += 3;
             w.hand += 1.5;
         }
 
-        // 4. God Specific Synergies (Simple check of first equipped god)
+        // 4. God Synergies for Hard Mode
         if (ai.equippedGods.length > 0) {
             const godId = ai.equippedGods[0];
-            if (godId === 'thors_strike') w.tokenBonus += 1;
-            if (godId === 'iduns_rejuvenation') { w.tokenBonus += 1; }
-            if (godId === 'vidars_might') { w.tokenBonus += 1; }
+            if (godId === 'thors_strike') w.tokenBonus += 1.5;
+            if (godId === 'iduns_rejuvenation') w.tokenBonus += 1.5;
+            if (godId === 'vidars_might') w.tokenBonus += 1.5;
         }
 
         return w;

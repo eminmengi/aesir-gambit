@@ -81,4 +81,5 @@ export interface GameState {
     };
     winner: PlayerId | null;
     logs: LogEntry[];
+    aiDifficulty: 'easy' | 'medium' | 'hard';
 }

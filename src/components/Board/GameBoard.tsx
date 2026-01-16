@@ -4,13 +4,15 @@ import { Dice3D } from '../Dice/Dice3D';
 import { PlayerHUD } from '../HUD/PlayerHUD';
 import { GodSelectionModal } from '../Gods/GodSelectionModal';
 import { useTranslation } from 'react-i18next';
-import { Settings, Globe } from 'lucide-react';
+import clsx from 'clsx';
+import { Settings, Globe, CloudSnow, CloudRain, Flame, Sun, Trees, Box, Moon, Brain, Shield, Skull, Lock, RotateCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AnimationController } from '../Effects/AnimationController';
+import { TokenAnimationLayer } from '../Effects/TokenAnimationLayer';
 import { DynamicBackground } from '../Effects/DynamicBackground';
 
 import { GameOverModal } from '../Modals/GameOverModal';
-import { CloudSnow, CloudRain, Flame, Sun, Trees, Box, Moon } from 'lucide-react';
+
 import { AIController } from '../../logic/ai/AIController';
 
 // Available themes
@@ -46,6 +48,7 @@ export const GameBoard: React.FC = () => {
         resetGame: _resetGame,
         logs,
         hasRolled,
+        aiDifficulty,
     } = useGameStore();
 
     const [isRolling, setIsRolling] = React.useState(false);
@@ -129,6 +132,7 @@ export const GameBoard: React.FC = () => {
             <DynamicBackground weather={weather} />
 
             <AnimationController />
+            <TokenAnimationLayer />
 
             {phase === 'GAME_OVER' && <GameOverModal />}
 
@@ -163,57 +167,95 @@ export const GameBoard: React.FC = () => {
                                 <span>{i18n.language === 'tr' ? 'English' : 'Türkçe'}</span>
                             </button>
 
-                            {/* Weather Selector */}
-                            <div>
-                                <div className="text-[10px] text-stone-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                    {t('themes.title')}
+                            {/* Restart Game Button */}
+                            <button
+                                onClick={() => {
+                                    if (confirm(t('common.restart_confirm', 'Oyunu yeniden başlatmak istediğine emin misin?'))) {
+                                        useGameStore.getState().resetGame();
+                                        setShowSettings(false);
+                                    }
+                                }}
+                                className="w-full mb-4 flex items-center justify-center gap-2 p-3 bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 text-red-200 rounded-lg transition-all font-serif uppercase tracking-widest text-xs"
+                            >
+                                <RotateCcw size={14} />
+                                <span>{t('game.restart', 'Oyunu Sıfırla')}</span>
+                            </button>
+
+                            {/* AI Difficulty Selector */}
+                            {/* AI Difficulty Status (Read Only) */}
+                            <div className="mb-4 p-3 bg-black/40 rounded-lg border border-white/5">
+                                <div className="text-[10px] text-stone-500 uppercase tracking-widest mb-2 flex items-center justify-between">
+                                    <span>{t('ai.difficulty_title')}</span>
+                                    <Lock size={10} className="text-stone-600" />
                                 </div>
-                                <div className="grid grid-cols-4 gap-2">
-                                    {(['snow', 'rain', 'ember', 'clear'] as WeatherTheme[]).map((w) => (
-                                        <button
-                                            key={w}
-                                            onClick={() => setWeather(w)}
-                                            className={`
+                                <div className={clsx(
+                                    "flex items-center gap-3 text-sm font-bold p-2 rounded",
+                                    aiDifficulty === 'easy' ? "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20" :
+                                        aiDifficulty === 'medium' ? "text-amber-400 bg-amber-500/10 border border-amber-500/20" :
+                                            "text-red-500 bg-red-600/10 border border-red-600/20"
+                                )}>
+                                    {aiDifficulty === 'easy' && <Shield size={18} />}
+                                    {aiDifficulty === 'medium' && <Brain size={18} />}
+                                    {aiDifficulty === 'hard' && <Skull size={18} />}
+                                    <span>
+                                        {aiDifficulty === 'easy' ? t('ai.easy').split(' ')[0] :
+                                            aiDifficulty === 'medium' ? t('ai.medium').split(' ')[0] :
+                                                t('ai.hard').split(' ')[0]}
+                                    </span>
+                                </div>
+                                <div className="mt-2 text-[10px] text-stone-500 italic">
+                                    {t(`ai.${aiDifficulty}_desc`)}
+                                </div>
+                            </div>
+
+                            <div className="text-[10px] text-stone-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                {t('themes.title')}
+                            </div>
+                            <div className="grid grid-cols-4 gap-2">
+                                {(['snow', 'rain', 'ember', 'clear'] as WeatherTheme[]).map((w) => (
+                                    <button
+                                        key={w}
+                                        onClick={() => setWeather(w)}
+                                        className={`
                                                 flex items-center justify-center p-3 rounded-lg border transition-all
                                                 ${weather === w
-                                                    ? 'bg-viking-gold/20 border-viking-gold text-viking-gold shadow-[0_0_10px_rgba(212,175,55,0.2)]'
-                                                    : 'bg-black/40 border-transparent text-stone-500 hover:bg-white/5 hover:text-stone-300'}
+                                                ? 'bg-viking-gold/20 border-viking-gold text-viking-gold shadow-[0_0_10px_rgba(212,175,55,0.2)]'
+                                                : 'bg-black/40 border-transparent text-stone-500 hover:bg-white/5 hover:text-stone-300'}
                                             `}
-                                            title={t(`themes.${w}`)}
-                                        >
-                                            {w === 'snow' && <CloudSnow size={18} />}
-                                            {w === 'rain' && <CloudRain size={18} />}
-                                            {w === 'ember' && <Flame size={18} />}
-                                            {w === 'clear' && <Sun size={18} />}
-                                        </button>
-                                    ))}
-                                </div>
+                                        title={t(`themes.${w}`)}
+                                    >
+                                        {w === 'snow' && <CloudSnow size={18} />}
+                                        {w === 'rain' && <CloudRain size={18} />}
+                                        {w === 'ember' && <Flame size={18} />}
+                                        {w === 'clear' && <Sun size={18} />}
+                                    </button>
+                                ))}
                             </div>
 
                             {/* Background Texture Selector */}
                             <div>
-                                <div className="text-[10px] text-stone-500 uppercase tracking-widest mb-2">Zemin / Doku</div>
+                                <div className="text-[10px] text-stone-500 uppercase tracking-widest mb-2">{t('themes.bg_texture', 'Zemin / Doku')}</div>
                                 <div className="grid grid-cols-3 gap-2">
                                     <button
                                         onClick={() => setBgTheme('wood')}
                                         className={`flex flex-col items-center gap-1 p-2 rounded border transition-all ${bgTheme === 'wood' ? 'bg-viking-gold/20 border-viking-gold text-viking-gold' : 'bg-black/40 border-transparent text-stone-500'}`}
                                     >
                                         <Trees size={16} />
-                                        <span className="text-[10px]">Ahşap</span>
+                                        <span className="text-[10px]">{t('themes.wood', 'Ahşap')}</span>
                                     </button>
                                     <button
                                         onClick={() => setBgTheme('stone')}
                                         className={`flex flex-col items-center gap-1 p-2 rounded border transition-all ${bgTheme === 'stone' ? 'bg-viking-gold/20 border-viking-gold text-viking-gold' : 'bg-black/40 border-transparent text-stone-500'}`}
                                     >
                                         <Box size={16} />
-                                        <span className="text-[10px]">Taş</span>
+                                        <span className="text-[10px]">{t('themes.stone', 'Taş')}</span>
                                     </button>
                                     <button
                                         onClick={() => setBgTheme('dark')}
                                         className={`flex flex-col items-center gap-1 p-2 rounded border transition-all ${bgTheme === 'dark' ? 'bg-viking-gold/20 border-viking-gold text-viking-gold' : 'bg-black/40 border-transparent text-stone-500'}`}
                                     >
                                         <Moon size={16} />
-                                        <span className="text-[10px]">Koyu</span>
+                                        <span className="text-[10px]">{t('themes.dark', 'Koyu')}</span>
                                     </button>
                                 </div>
                             </div>
@@ -235,6 +277,7 @@ export const GameBoard: React.FC = () => {
                         {p2.dice.map((die) => (
                             <Dice3D
                                 key={die.id}
+                                id={die.id}
                                 face={die.face}
                                 locked={die.locked}
                                 rolling={isOpponentRolling && !die.locked}
@@ -331,6 +374,7 @@ export const GameBoard: React.FC = () => {
                         {p1.dice.map((die, idx) => (
                             <Dice3D
                                 key={die.id}
+                                id={die.id}
                                 face={die.face}
                                 locked={die.locked}
                                 rolling={isRolling && !die.locked}
@@ -343,6 +387,6 @@ export const GameBoard: React.FC = () => {
 
                 <PlayerHUD player={p1} isCurrentTurn={currentTurn === 'player'} />
             </div>
-        </div>
+        </div >
     );
 };

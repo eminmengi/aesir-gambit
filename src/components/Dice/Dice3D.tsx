@@ -10,6 +10,7 @@ interface Dice3DProps {
     onClick?: () => void;
     rolling: boolean;
     disabled?: boolean;
+    id?: string;
 }
 
 import {
@@ -33,7 +34,7 @@ const NEIGHBORS: Record<DiceType, DiceType[]> = {
     hand: ['axe', 'helmet', 'arrow', 'shield', 'hand']
 };
 
-export const Dice3D: React.FC<Dice3DProps> = ({ face, locked, onClick, rolling, disabled }) => {
+export const Dice3D: React.FC<Dice3DProps> = ({ face, locked, onClick, rolling, disabled, id }) => {
     const { t } = useTranslation();
     const controls = useAnimation();
 
@@ -112,7 +113,7 @@ export const Dice3D: React.FC<Dice3DProps> = ({ face, locked, onClick, rolling, 
     );
 
     return (
-        <div className="group relative w-24 h-24 flex items-center justify-center select-none perspective-[800px]">
+        <div id={id} className="group relative w-24 h-24 flex items-center justify-center select-none perspective-[800px]">
             <motion.div
                 className={clsx(
                     "w-20 h-20 relative preserve-3d cursor-pointer active:scale-95 transition-all duration-200",

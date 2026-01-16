@@ -17,6 +17,15 @@
         "defeat_desc": "Fallen, but not forgotten.",
         "play_again": "Play Again"
     },
+    "ai": {
+        "difficulty_title": "AI Difficulty",
+        "easy": "Easy (Green)",
+        "medium": "Normal (Yellow)",
+        "hard": "Jomsviking (Red)",
+        "easy_desc": "Novice warrior. Makes mistakes, focuses on loot.",
+        "medium_desc": "Experienced Viking. Balanced offense and defense.",
+        "hard_desc": "Legendary Jomsviking. Ruthless, calculating, and lethal."
+    },
     "themes": {
         "title": "Atmosphere",
         "snow": "Snow",

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useGameStore } from '../../store/gameStore';
+import { useAnimationStore } from '../../store/animationStore';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
@@ -8,12 +9,18 @@ import clsx from 'clsx';
 type VisualEffect = 'shake' | 'flash' | 'lightning' | 'sparkles' | 'none';
 
 export const AnimationController: React.FC = () => {
-    const { logs } = useGameStore();
+    const { logs, players } = useGameStore();
+    const { triggerTokenAnimation } = useAnimationStore();
     const [effect, setEffect] = useState<VisualEffect>('none');
     const [message, setMessage] = useState<string | null>(null);
-    const lastProcessedLogLength = React.useRef(0);
+    const lastProcessedLogLength = useRef(0);
 
     const { t } = useTranslation();
+
+    const triggerEffect = (type: VisualEffect) => {
+        setEffect(type);
+        setTimeout(() => setEffect('none'), 800);
+    };
 
     // Watch for new logs
     useEffect(() => {
@@ -23,7 +30,26 @@ export const AnimationController: React.FC = () => {
             const logKey = lastLog.key;
 
             // Effect Logic
-            if (logKey.includes('damage_dealt') && lastLog.params?.source === 'Thor') {
+            if (logKey === 'logs.token_gain') {
+                const { p1, p2 } = lastLog.params as { p1: number, p2: number };
+
+                // Player 1 Animations
+                if (p1 > 0) {
+                    const tokenDice = players.player.dice.filter(d => d.face.hasToken);
+                    tokenDice.forEach((die, i) => {
+                        triggerTokenAnimation(die.id, 'token-bowl-player', 1, i * 0.1);
+                    });
+                }
+
+                // Player 2 Animations
+                if (p2 > 0) {
+                    const tokenDice = players.opponent.dice.filter(d => d.face.hasToken);
+                    tokenDice.forEach((die, i) => {
+                        triggerTokenAnimation(die.id, 'token-bowl-opponent', 1, i * 0.1);
+                    });
+                }
+            }
+            else if (logKey.includes('damage_dealt') && lastLog.params?.source === 'Thor') {
                 triggerEffect('lightning');
             }
             else if (logKey.includes('healed')) {
@@ -42,12 +68,7 @@ export const AnimationController: React.FC = () => {
             lastProcessedLogLength.current = logs.length;
             return () => clearTimeout(timer);
         }
-    }, [logs, t]);
-
-    const triggerEffect = (type: VisualEffect) => {
-        setEffect(type);
-        setTimeout(() => setEffect('none'), 800);
-    };
+    }, [logs, t, players, triggerTokenAnimation]);
 
     return (
         <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center overflow-hidden">

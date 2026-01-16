@@ -42,7 +42,7 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({ player, isCurrentTurn }) =
                 </div>
 
                 {/* Tokens */}
-                <div className="flex items-center gap-2">
+                <div id={`token-bowl-${player.id}`} className="flex items-center gap-2">
                     <RuneStoneIcon size={20} className="text-viking-gold" />
                     <span className="text-xl font-mono text-viking-gold">{player.tokens}</span>
                 </div>

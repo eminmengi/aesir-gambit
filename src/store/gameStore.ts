@@ -34,6 +34,7 @@ interface GameActions {
     setOpponentDice: (faces: DiceFace[]) => void;
     advancePhase: () => void;
     resetGame: () => void;
+    setAiDifficulty: (level: 'easy' | 'medium' | 'hard') => void;
 }
 
 export const useGameStore = create<GameState & GameActions>((set, get) => ({
@@ -47,6 +48,9 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
     },
     winner: null,
     logs: [], // To store resolution logs
+    aiDifficulty: 'hard', // Default to Hard (Jomsviking)
+
+    setAiDifficulty: (level) => set({ aiDifficulty: level }),
 
     rollDice: (playerId) => {
         const state = get();

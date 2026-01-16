@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const GodSelectionModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-    const { players, setPlayerGods } = useGameStore();
+    const { players, setPlayerGods, aiDifficulty } = useGameStore();
     const [selectedGods, setSelectedGods] = useState<GodFavorId[]>(players.player.equippedGods || []);
     const { t } = useTranslation();
 
@@ -69,6 +69,37 @@ export const GodSelectionModal: React.FC<{ onClose: () => void }> = ({ onClose }
                             <span>{t('gods.start_battle')}</span>
                             <ArrowRightIcon className="w-5 h-5" />
                         </button>
+                    </div>
+
+                    {/* Difficulty & Settings Bar */}
+                    <div className="bg-[#15171b] border-b border-white/5 p-4 flex flex-col md:flex-row gap-4 items-center justify-between z-20 shadow-lg">
+                        <div className="flex items-center gap-4">
+                            <span className="text-stone-400 text-sm font-serif uppercase tracking-widest">
+                                {t('ai.difficulty_title', 'AI Difficulty')}:
+                            </span>
+                            <div className="flex bg-black/40 rounded-lg p-1 border border-white/5">
+                                {(['easy', 'medium', 'hard'] as const).map((level) => (
+                                    <button
+                                        key={level}
+                                        onClick={() => useGameStore.getState().setAiDifficulty(level)}
+                                        className={clsx(
+                                            "px-4 py-2 rounded-md transition-all text-xs font-bold uppercase tracking-wide flex flex-col items-center gap-1",
+                                            aiDifficulty === level
+                                                ? level === 'easy' ? "bg-emerald-900/50 text-emerald-400 border border-emerald-500/50"
+                                                    : level === 'medium' ? "bg-amber-900/50 text-amber-400 border border-amber-500/50"
+                                                        : "bg-red-900/50 text-red-500 border border-red-500/50 shadow-[0_0_10px_rgba(220,38,38,0.2)]"
+                                                : "text-stone-600 hover:text-stone-300 hover:bg-white/5"
+                                        )}
+                                        title={t(`ai.${level}_desc`)}
+                                    >
+                                        <span>{t(`ai.${level}`).split(' ')[0]}</span>
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="hidden md:block text-xs text-stone-500 italic max-w-md border-l border-white/10 pl-4">
+                                {t(`ai.${aiDifficulty}_desc`)}
+                            </div>
+                        </div>
                     </div>
 
                     {/* God Grid */}
