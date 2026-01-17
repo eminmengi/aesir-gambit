@@ -11,6 +11,7 @@ interface Dice3DProps {
     rolling: boolean;
     disabled?: boolean;
     id?: string;
+    isFaceDown?: boolean;
 }
 
 import {
@@ -34,7 +35,7 @@ const NEIGHBORS: Record<DiceType, DiceType[]> = {
     hand: ['axe', 'helmet', 'arrow', 'shield', 'hand']
 };
 
-export const Dice3D: React.FC<Dice3DProps> = ({ face, locked, onClick, rolling, disabled, id }) => {
+export const Dice3D: React.FC<Dice3DProps> = ({ face, locked, onClick, rolling, disabled, id, isFaceDown }) => {
     const { t } = useTranslation();
     const controls = useAnimation();
 
@@ -52,18 +53,44 @@ export const Dice3D: React.FC<Dice3DProps> = ({ face, locked, onClick, rolling, 
 
     useEffect(() => {
         if (rolling) {
+            // Randomize tumbling to make it look organic
+            // We spin 4 full rotations (1440 deg) ensuring we land back at 0 relative (multiple of 360)
+            const randomX = 720 + Math.random() * 360; // Mid-air chaotic spin
+            const randomY = 720 + Math.random() * 360;
+            const randomZ = 180 + Math.random() * 180;
+            const direction = Math.random() > 0.5 ? 1 : -1;
+
             controls.start({
-                rotateX: [0, 450, 810, 1440],
-                rotateY: [0, 450, 810, 1440],
-                rotateZ: [0, 180, 360],
-                transition: { duration: 0.8, ease: "easeInOut" }
+                y: [0, -120 * direction, 0], // The "Toss" arc (vertical) and LAND
+                x: [0, 20 * direction, 0],   // Slight horizontal drift
+                scale: [1, 1.15, 1],         // Looming effect (closer to camera)
+                rotateX: [0, randomX, 1440], // Spin X
+                rotateY: [0, randomY, 1440], // Spin Y
+                rotateZ: [0, randomZ, 360],  // Spin Z
+                transition: {
+                    duration: 1.0,
+                    times: [0, 0.5, 1], // Peak at 50%
+                    ease: "easeInOut"
+                }
+            }).then(() => {
+                // Impact Shake (Landing)
+                controls.start({
+                    y: [0, -10, 0],
+                    rotateX: [1440, 1450, 1440],
+                    transition: { duration: 0.2, ease: "easeOut" }
+                });
             });
         } else {
+            // Reset to clean state (0,0,0) INSTANTLY to prevent "unwinding" mechanism
+            // We use duration: 0 to snap from 1440 -> 0 (visually identical)
             controls.start({
+                y: 0,
+                x: 0,
+                scale: 1,
                 rotateX: 0,
                 rotateY: 0,
                 rotateZ: 0,
-                transition: { type: "spring", stiffness: 120, damping: 20 }
+                transition: { duration: 0 }
             });
         }
     }, [rolling, controls]);
@@ -75,13 +102,15 @@ export const Dice3D: React.FC<Dice3DProps> = ({ face, locked, onClick, rolling, 
         className,
         isFront = false,
         type,
-        hasToken = false
+        hasToken = false,
+        hideContent = false
     }: {
         style?: React.CSSProperties,
         className?: string,
         isFront?: boolean,
         type: DiceType,
-        hasToken?: boolean
+        hasToken?: boolean,
+        hideContent?: boolean
     }) => (
         <div
             className={clsx(
@@ -92,13 +121,15 @@ export const Dice3D: React.FC<Dice3DProps> = ({ face, locked, onClick, rolling, 
             )}
             style={style}
         >
-            {/* Render Icon */}
-            <div className={clsx("transform transition-all duration-300", locked && isFront ? "scale-90" : "scale-100")}>
-                {ICONS[type]}
-            </div>
+            {/* Render Icon (Hidden if Face Down) */}
+            {!hideContent && (
+                <div className={clsx("transform transition-all duration-300", locked && isFront ? "scale-90" : "scale-100")}>
+                    {ICONS[type]}
+                </div>
+            )}
 
-            {/* Gold Token Border - Premium Gold Leaf Effect */}
-            {hasToken && (
+            {/* Gold Token Border (Hidden if Face Down) */}
+            {hasToken && !hideContent && (
                 <>
                     {/* Inner Glow for depth */}
                     <div className="absolute inset-[4px] rounded-sm shadow-[inset_0_0_8px_rgba(251,191,36,0.4)] pointer-events-none" />
@@ -116,11 +147,16 @@ export const Dice3D: React.FC<Dice3DProps> = ({ face, locked, onClick, rolling, 
         <div id={id} className="group relative w-24 h-24 flex items-center justify-center select-none perspective-[800px]">
             <motion.div
                 className={clsx(
-                    "w-20 h-20 relative preserve-3d cursor-pointer active:scale-95 transition-all duration-200",
+                    "w-20 h-20 relative preserve-3d cursor-pointer active:scale-95",
                     locked ? "translate-y-3" : "hover:-translate-y-2",
-                    disabled && !locked && "opacity-70 grayscale-[0.3]"
+                    disabled && !locked && !rolling && "opacity-70 grayscale-[0.3]",
+                    rolling && "z-50" // Boost Z-Index when rolling
                 )}
-                style={{ transformStyle: 'preserve-3d' }}
+                style={{
+                    transformStyle: 'preserve-3d',
+                    // Force full visibility when rolling to prevent 2D flattening
+                    ...(rolling ? { opacity: 1, filter: 'none' } : {})
+                }}
                 onClick={() => !disabled && onClick?.()}
                 animate={controls}
             >
@@ -130,6 +166,7 @@ export const Dice3D: React.FC<Dice3DProps> = ({ face, locked, onClick, rolling, 
                     isFront={true}
                     type={face.type}
                     hasToken={face.hasToken}
+                    hideContent={isFaceDown}
                 />
 
                 {/* BACK */}

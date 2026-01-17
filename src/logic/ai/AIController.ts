@@ -46,6 +46,18 @@ export class AIController {
     }
 
     /**
+     * Helper to get AI's decision for the CURRENT single state (not full simulation).
+     * Returns indices of dice to LOCK/KEEP.
+     */
+    static decideNextMove(currentState: GameState): number[] {
+        const ai = currentState.players.opponent;
+        const player = currentState.players.player;
+        const weights = this.calculateWeights(ai, player, currentState.aiDifficulty);
+
+        return this.decideKeep(ai.dice.map(d => d.face), weights);
+    }
+
+    /**
      * Decides which God Favor to use and at what level.
      */
     static decideGodFavor(state: GameState): { godId: string, level: 1 | 2 | 3 } | null {

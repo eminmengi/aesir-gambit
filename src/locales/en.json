@@ -15,7 +15,8 @@
         "defeat": "DEFEAT...",
         "victory_desc": "Valhalla awaits!",
         "defeat_desc": "Fallen, but not forgotten.",
-        "play_again": "Play Again"
+        "play_again": "Play Again",
+        "restart": "Restart Game"
     },
     "ai": {
         "difficulty_title": "AI Difficulty",

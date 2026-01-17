@@ -49,13 +49,14 @@ export const GameBoard: React.FC = () => {
         logs,
         hasRolled,
         aiDifficulty,
+        setLockedDice,
     } = useGameStore();
 
     const [isRolling, setIsRolling] = React.useState(false);
     const [isOpponentRolling, setIsOpponentRolling] = React.useState(false);
     const [showSettings, setShowSettings] = useState(false);
-    const [weather, setWeather] = useState<WeatherTheme>('snow');
-    const [bgTheme, setBgTheme] = useState<BackgroundTheme>('wood');
+    const [weather, setWeather] = useState<WeatherTheme>('ember');
+    const [bgTheme, setBgTheme] = useState<BackgroundTheme>('stone');
     const { t, i18n } = useTranslation();
 
     const handleRoll = () => {
@@ -74,47 +75,63 @@ export const GameBoard: React.FC = () => {
     // Auto-open God Selection if gods are not equipped
     const showGodSelection = players.player.equippedGods.length === 0;
 
-    // AI Turn Simulation (Jomsviking Level)
+    // AI Turn Logic (Step-by-Step)
     useEffect(() => {
-        if (currentTurn === 'opponent' && phase === 'ROLL_PHASE') {
+        const state = useGameStore.getState();
+
+        // 1. ROLL PHASE LOGIC
+        if (currentTurn === 'opponent' && phase === 'ROLL_PHASE' && !isOpponentRolling) {
             setIsOpponentRolling(true);
 
-            // 1. Thinking Time (Short delay for realism)
-            const thinkTimer = setTimeout(() => {
+            // Step A: Animation Delay before Roll (0.8s)
+            const preRollTimer = setTimeout(() => {
+                state.rollDice('opponent');
 
-                // 2. Perform AI Calculation
-                const state = useGameStore.getState();
-                const smartHand = AIController.simulateTurn(state);
-                const godDecision = AIController.decideGodFavor(state);
-
-                // 3. Rolling Animation Duration
-                const rollTimer = setTimeout(() => {
-                    // Apply AI decisions
-                    state.setOpponentDice(smartHand);
-
-                    if (godDecision) {
-                        state.selectGodFavor('opponent', godDecision.godId, godDecision.level);
-                    }
-
+                // Step B: Rolling Animation (1.2s)
+                setTimeout(() => {
                     setIsOpponentRolling(false);
 
-                    // 4. End Turn
-                    const endTimer = setTimeout(() => {
-                        advancePhase();
-                    }, 1000);
+                    // Step C: Thinking & Decision (0.8s)
+                    setTimeout(() => {
+                        // AI Decides what to KEEP (Lock)
+                        const keepIndices = AIController.decideNextMove(useGameStore.getState());
+                        state.setLockedDice('opponent', keepIndices);
 
-                    return () => clearTimeout(endTimer);
-                }, 1200); // 1.2s rolling animation
+                        // Step D: Pass Turn (0.5s)
+                        setTimeout(() => {
+                            state.advancePhase();
+                        }, 500);
 
-                return () => clearTimeout(rollTimer);
+                    }, 800);
+                }, 1200);
+
             }, 800);
 
-            return () => clearTimeout(thinkTimer);
+            return () => {
+                clearTimeout(preRollTimer);
+            };
         }
-    }, [currentTurn, phase, advancePhase]);
+
+        // 2. GOD FAVOR PHASE LOGIC
+        if (phase === 'GOD_FAVOR_PHASE') {
+            // AI instantly picks a God power if it hasn't already (or we just overwrite)
+            const decision = AIController.decideGodFavor(state);
+            if (decision) {
+                useGameStore.getState().selectGodFavor('opponent', decision.godId, decision.level);
+            }
+        }
+
+    }, [currentTurn, phase, rollCount, setLockedDice]);
 
     const p1 = players.player;
     const p2 = players.opponent;
+
+    // Pre-Roll State Logic (Face Down until first roll)
+    // CRITICAL FIX: Only apply this during ROLL_PHASE. In God Favor/Resolution, dice must be visible!
+    const isRollPhase = phase === 'ROLL_PHASE';
+    const isFirstTurn = rollCount === 0;
+    const p1FaceDown = isRollPhase && isFirstTurn && currentTurn === 'player' && !hasRolled && !isRolling;
+    const p2FaceDown = isRollPhase && isFirstTurn && (currentTurn === 'player' || (currentTurn === 'opponent' && !hasRolled && !isOpponentRolling));
 
     return (
         <div
@@ -178,7 +195,7 @@ export const GameBoard: React.FC = () => {
                                 className="w-full mb-4 flex items-center justify-center gap-2 p-3 bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 text-red-200 rounded-lg transition-all font-serif uppercase tracking-widest text-xs"
                             >
                                 <RotateCcw size={14} />
-                                <span>{t('game.restart', 'Oyunu Sıfırla')}</span>
+                                <span>{t('game.restart')}</span>
                             </button>
 
                             {/* AI Difficulty Selector */}
@@ -237,18 +254,18 @@ export const GameBoard: React.FC = () => {
                                 <div className="text-[10px] text-stone-500 uppercase tracking-widest mb-2">{t('themes.bg_texture', 'Zemin / Doku')}</div>
                                 <div className="grid grid-cols-3 gap-2">
                                     <button
-                                        onClick={() => setBgTheme('wood')}
-                                        className={`flex flex-col items-center gap-1 p-2 rounded border transition-all ${bgTheme === 'wood' ? 'bg-viking-gold/20 border-viking-gold text-viking-gold' : 'bg-black/40 border-transparent text-stone-500'}`}
-                                    >
-                                        <Trees size={16} />
-                                        <span className="text-[10px]">{t('themes.wood', 'Ahşap')}</span>
-                                    </button>
-                                    <button
                                         onClick={() => setBgTheme('stone')}
                                         className={`flex flex-col items-center gap-1 p-2 rounded border transition-all ${bgTheme === 'stone' ? 'bg-viking-gold/20 border-viking-gold text-viking-gold' : 'bg-black/40 border-transparent text-stone-500'}`}
                                     >
                                         <Box size={16} />
                                         <span className="text-[10px]">{t('themes.stone', 'Taş')}</span>
+                                    </button>
+                                    <button
+                                        onClick={() => setBgTheme('wood')}
+                                        className={`flex flex-col items-center gap-1 p-2 rounded border transition-all ${bgTheme === 'wood' ? 'bg-viking-gold/20 border-viking-gold text-viking-gold' : 'bg-black/40 border-transparent text-stone-500'}`}
+                                    >
+                                        <Trees size={16} />
+                                        <span className="text-[10px]">{t('themes.wood', 'Ahşap')}</span>
                                     </button>
                                     <button
                                         onClick={() => setBgTheme('dark')}
@@ -282,6 +299,7 @@ export const GameBoard: React.FC = () => {
                                 locked={die.locked}
                                 rolling={isOpponentRolling && !die.locked}
                                 disabled={true}
+                                isFaceDown={p2FaceDown}
                             />
                         ))}
                     </div>
@@ -378,8 +396,9 @@ export const GameBoard: React.FC = () => {
                                 face={die.face}
                                 locked={die.locked}
                                 rolling={isRolling && !die.locked}
-                                onClick={() => toggleLock('player', idx)}
-                                disabled={currentTurn !== 'player' || phase !== 'ROLL_PHASE' || rollCount >= 3}
+                                onClick={() => !p1FaceDown && toggleLock('player', idx)}
+                                disabled={currentTurn !== 'player' || phase !== 'ROLL_PHASE' || rollCount >= 3 || p1FaceDown}
+                                isFaceDown={p1FaceDown}
                             />
                         ))}
                     </div>

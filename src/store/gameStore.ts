@@ -35,6 +35,7 @@ interface GameActions {
     advancePhase: () => void;
     resetGame: () => void;
     setAiDifficulty: (level: 'easy' | 'medium' | 'hard') => void;
+    setLockedDice: (player: PlayerId, indices: number[]) => void;
 }
 
 export const useGameStore = create<GameState & GameActions>((set, get) => ({
@@ -78,6 +79,23 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
             const player = state.players[playerId];
             const newDice = [...player.dice];
             newDice[dieIndex] = { ...newDice[dieIndex], locked: !newDice[dieIndex].locked };
+
+            return {
+                players: {
+                    ...state.players,
+                    [playerId]: { ...player, dice: newDice }
+                }
+            };
+        });
+    },
+
+    setLockedDice: (playerId, indices) => {
+        set((state) => {
+            const player = state.players[playerId];
+            const newDice = player.dice.map((die, index) => ({
+                ...die,
+                locked: indices.includes(index)
+            }));
 
             return {
                 players: {

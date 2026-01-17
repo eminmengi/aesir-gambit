@@ -15,10 +15,11 @@
         "defeat": "YENİLGİ...",
         "victory_desc": "Valhalla Salonları seni bekliyor!",
         "defeat_desc": "Düştün ancak unutulmadın.",
-        "play_again": "Tekrar Oyna"
+        "play_again": "Tekrar Oyna",
+        "restart": "Oyunu Sıfırla"
     },
     "ai": {
-        "difficulty_title": "Yapay Zeka Seviyesi",
+        "difficulty_title": "Zorluk Seviyesi",
         "easy": "Kolay (Yeşil)",
         "medium": "Normal (Sarı)",
         "hard": "Jomsviking (Kırmızı)",
