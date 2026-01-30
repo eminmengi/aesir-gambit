@@ -5,7 +5,7 @@ import { PlayerHUD } from '../HUD/PlayerHUD';
 import { GodSelectionModal } from '../Gods/GodSelectionModal';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { Settings, Globe, CloudSnow, CloudRain, Flame, Sun, Trees, Box, Moon, Brain, Shield, Skull, Lock, RotateCcw } from 'lucide-react';
+import { Settings, Globe, CloudSnow, CloudRain, Flame, Sun, Trees, Box, Moon, Brain, Shield, Skull, Lock, RotateCcw, Volume2, VolumeX, SkipForward } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AnimationController } from '../Effects/AnimationController';
 import { TokenAnimationLayer } from '../Effects/TokenAnimationLayer';
@@ -14,6 +14,7 @@ import { DynamicBackground } from '../Effects/DynamicBackground';
 import { GameOverModal } from '../Modals/GameOverModal';
 
 import { AIController } from '../../logic/ai/AIController';
+import { soundManager } from '../../logic/sound/SoundManager';
 
 // Available themes
 type WeatherTheme = 'snow' | 'rain' | 'ember' | 'clear';
@@ -55,11 +56,17 @@ export const GameBoard: React.FC = () => {
     const [isRolling, setIsRolling] = React.useState(false);
     const [isOpponentRolling, setIsOpponentRolling] = React.useState(false);
     const [showSettings, setShowSettings] = useState(false);
-    const [weather, setWeather] = useState<WeatherTheme>('ember');
-    const [bgTheme, setBgTheme] = useState<BackgroundTheme>('stone');
+    const [weather, setWeather] = useState<WeatherTheme>('ember'); // Default: Ember
+    const [bgTheme, setBgTheme] = useState<BackgroundTheme>('stone'); // Default: Stone
+    const [isMuted, setIsMuted] = useState(false);
+    const [volume, setVolume] = useState(soundManager.currentVolume);
+
     const { t, i18n } = useTranslation();
 
+    // Auto-Start removed per user request (Handled in GodSelectionModal)
+
     const handleRoll = () => {
+        // soundManager.playMusic(); // Removed to prevent interruptions (handled by global listener)
         setIsRolling(true);
         setTimeout(() => {
             rollDice('player');
@@ -81,6 +88,10 @@ export const GameBoard: React.FC = () => {
 
         // 1. ROLL PHASE LOGIC
         if (currentTurn === 'opponent' && phase === 'ROLL_PHASE' && !isOpponentRolling) {
+
+            // Sound Effect for Opponent Turn Start
+            // soundManager.play('dice_roll'); // Moved to inside timer to sync with animation
+
             setIsOpponentRolling(true);
 
             // Step A: Animation Delay before Roll (0.8s)
@@ -184,6 +195,70 @@ export const GameBoard: React.FC = () => {
                                 <span>{i18n.language === 'tr' ? 'English' : 'Türkçe'}</span>
                             </button>
 
+                            {/* Music Toggle */}
+                            {/* --- PREMIUM AUDIO CONTROLS --- */}
+                            <div className="bg-black/30 rounded-xl p-3 border border-white/5 space-y-3">
+                                <div className="flex items-center justify-between text-[10px] text-stone-500 uppercase tracking-widest font-serif">
+                                    <span>{t('settings.music', 'Audio Atmosphere')}</span>
+                                    <div className="flex gap-1">
+                                        <div className={`w-1 h-1 rounded-full ${!isMuted ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-3">
+                                    {/* Play/Pause/Mute Button */}
+                                    <button
+                                        onClick={() => {
+                                            const newMute = soundManager.toggleMute();
+                                            setIsMuted(newMute);
+                                        }}
+                                        className={`p-2 rounded-lg border transition-all ${isMuted
+                                            ? 'bg-red-900/20 border-red-500/30 text-red-500 hover:bg-red-900/40'
+                                            : 'bg-viking-gold/10 border-viking-gold/30 text-viking-gold hover:bg-viking-gold/20'
+                                            }`}
+                                    >
+                                        {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                                    </button>
+
+                                    {/* Volume Slider */}
+                                    <div className="flex-1 group relative">
+                                        <div className="absolute inset-x-0 h-1 bg-white/10 rounded-full top-1/2 -translate-y-1/2 overflow-hidden">
+                                            <div
+                                                className={`h-full transition-all duration-100 ${isMuted ? 'bg-red-900' : 'bg-viking-gold'}`}
+                                                style={{ width: `${volume * 100}%` }}
+                                            />
+                                        </div>
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="1"
+                                            step="0.05"
+                                            value={volume}
+                                            disabled={isMuted}
+                                            onChange={(e) => {
+                                                const val = parseFloat(e.target.value);
+                                                setVolume(val);
+                                                soundManager.setVolume(val);
+                                            }}
+                                            className="w-full h-10 opacity-0 cursor-pointer absolute inset-0 z-20"
+                                            style={{ margin: 0 }}
+                                        />
+                                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-[9px] text-stone-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                            {Math.round(volume * 100)}%
+                                        </div>
+                                    </div>
+
+                                    {/* Skip Button */}
+                                    <button
+                                        onClick={() => soundManager.playNextTrack()}
+                                        className="p-2 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 hover:text-white transition-colors text-stone-400"
+                                        title="Next Track"
+                                    >
+                                        <SkipForward size={16} />
+                                    </button>
+                                </div>
+                            </div>
+
                             {/* Restart Game Button */}
                             <button
                                 onClick={() => {
@@ -195,7 +270,7 @@ export const GameBoard: React.FC = () => {
                                 className="w-full mb-4 flex items-center justify-center gap-2 p-3 bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 text-red-200 rounded-lg transition-all font-serif uppercase tracking-widest text-xs"
                             >
                                 <RotateCcw size={14} />
-                                <span>{t('game.restart')}</span>
+                                <span>{t('settings.restart')}</span>
                             </button>
 
                             {/* AI Difficulty Selector */}
@@ -396,7 +471,13 @@ export const GameBoard: React.FC = () => {
                                 face={die.face}
                                 locked={die.locked}
                                 rolling={isRolling && !die.locked}
-                                onClick={() => !p1FaceDown && toggleLock('player', idx)}
+                                onClick={() => {
+                                    if (!p1FaceDown) {
+                                        // Start music if not started
+                                        soundManager.playMusic();
+                                        toggleLock('player', idx);
+                                    }
+                                }}
                                 disabled={currentTurn !== 'player' || phase !== 'ROLL_PHASE' || rollCount >= 3 || p1FaceDown}
                                 isFaceDown={p1FaceDown}
                             />

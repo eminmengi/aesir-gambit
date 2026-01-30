@@ -5,6 +5,7 @@ import { useGameStore } from '../../store/gameStore';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
+import { soundManager } from '../../logic/sound/SoundManager';
 
 export const GodSelectionModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const { players, setPlayerGods, aiDifficulty } = useGameStore();
@@ -22,6 +23,7 @@ export const GodSelectionModal: React.FC<{ onClose: () => void }> = ({ onClose }
     };
 
     const handleConfirm = () => {
+        soundManager.playMusic(); // Start music on confirm
         setPlayerGods('player', selectedGods);
         // Auto-select 3 random gods for opponent if not set
         if (players.opponent.equippedGods.length === 0) {

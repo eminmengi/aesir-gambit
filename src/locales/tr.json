@@ -14,8 +14,13 @@
         "victory": "ZAFER!",
         "defeat": "YENİLGİ...",
         "victory_desc": "Valhalla Salonları seni bekliyor!",
-        "defeat_desc": "Düştün ancak unutulmadın.",
-        "play_again": "Tekrar Oyna",
+        "defeat_desc": "Düştün ancak unutulmadın."
+    },
+    "settings": {
+        "title": "Ayarlar",
+        "language": "Dil",
+        "difficulty": "Zorluk",
+        "music": "Müzik",
         "restart": "Oyunu Sıfırla"
     },
     "ai": {
