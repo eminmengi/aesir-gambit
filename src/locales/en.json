@@ -28,6 +28,40 @@
             "unmute": "Unmute Music",
             "skip": "Skip Track",
             "volume": "Volume"
+        },
+        "help": "How to Play"
+    },
+    "tutorial": {
+        "skip": "Skip Tutorial",
+        "next": "Next",
+        "prev": "Previous",
+        "finish": "Start Battle",
+        "dont_show": "Don't show this guide again",
+        "slide1": {
+            "title": "The Jarl's Duty",
+            "desc": "Your goal is simple: Reduce your opponent's Health to 0. Master the Dice and invoke the Favor of the Gods to claim victory."
+        },
+        "slide2": {
+            "title": "Bones of Fate",
+            "desc": "Each die face has a purpose. Hover over them to learn their secrets.",
+            "axe": "Melee Attack",
+            "axe_desc": "Deals damage. Blocked by Helmets.",
+            "arrow": "Ranged Attack",
+            "arrow_desc": "Deals damage. Blocked by Shields.",
+            "helmet": "Defense",
+            "helmet_desc": "Blocks Axe damage.",
+            "shield": "Defense",
+            "shield_desc": "Blocks Arrow damage.",
+            "hand": "Theft",
+            "hand_desc": "Steals God Tokens from your opponent."
+        },
+        "slide3": {
+            "title": "Divine Intervention",
+            "desc": "Dice with Gold Outlines grant **God Tokens**. Collect them to unleash powerful abilities (God Favors) that can turn the tide of battle."
+        },
+        "slide4": {
+            "title": "The Flow of Battle",
+            "desc": "1. **Roll Phase:** Roll dice up to 3 times. Lock the ones you want to keep.\n2. **God Phase:** Select a God Favor to activate (and counter your opponent).\n3. **Resolution:** Violence unfolds. Damage is dealt, and powers trigger."
         }
     },
     "ai": {

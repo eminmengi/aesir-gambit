@@ -14,7 +14,8 @@
         "victory": "ZAFER!",
         "defeat": "YENİLGİ...",
         "victory_desc": "Valhalla Salonları seni bekliyor!",
-        "defeat_desc": "Düştün ancak unutulmadın."
+        "defeat_desc": "Düştün ancak unutulmadın.",
+        "play_again": "Tekrar Oyna"
     },
     "settings": {
         "title": "Ayarlar",
@@ -27,6 +28,40 @@
             "unmute": "Sesi Aç",
             "skip": "Sıradaki Müzik",
             "volume": "Ses Seviyesi"
+        },
+        "help": "Nasıl Oynanır"
+    },
+    "tutorial": {
+        "skip": "Rehberi Geç",
+        "next": "İleri",
+        "prev": "Geri",
+        "finish": "Savaşa Başla",
+        "dont_show": "Bir daha gösterme",
+        "slide1": {
+            "title": "Jarl'ın Görevi",
+            "desc": "Amacın basit: Rakibinin canını sıfıra indir. Zarların gücünü kullan ve Tanrıların lütfuyla zaferi kazan."
+        },
+        "slide2": {
+            "title": "Kaderin Kemikleri",
+            "desc": "Her zar yüzü, savaşın bir parçasıdır. Sırlarını öğrenmek için üzerlerine gel.",
+            "axe": "Yakın Saldırı",
+            "axe_desc": "Hasar verir. Miğfer ile engellenir.",
+            "arrow": "Menzilli Saldırı",
+            "arrow_desc": "Hasar verir. Kalkan ile engellenir.",
+            "helmet": "Savunma",
+            "helmet_desc": "Balta hasarını engeller.",
+            "shield": "Savunma",
+            "shield_desc": "Ok hasarını engeller.",
+            "hand": "Hırsızlık",
+            "hand_desc": "Rakibinden Tanrı Jetonu (Token) çalar."
+        },
+        "slide3": {
+            "title": "İlahi Müdahale",
+            "desc": "Altın çerçeveli zarlar sana **Tanrı Jetonu** kazandırır. Bu jetonları harcayarak savaşın kaderini değiştiren güçlü lütufları çağır."
+        },
+        "slide4": {
+            "title": "Savaşın Akışı",
+            "desc": "1. **Zar Aşaması:** 3 kereye kadar zar at. İstediklerini kilitle.\n2. **Lütuf Aşaması:** Kullanacağın gücü seç (ve rakibine karşılık ver).\n3. **Çatışma:** Şiddet patlak verir. Hasarlar hesaplanır ve güçler devreye girer."
         }
     },
     "ai": {

@@ -3,16 +3,18 @@ import { useGameStore } from '../../store/gameStore';
 import { Dice3D } from '../Dice/Dice3D';
 import { PlayerHUD } from '../HUD/PlayerHUD';
 import { GodSelectionModal } from '../Gods/GodSelectionModal';
+import { TutorialModal } from '../Modals/TutorialModal';
+import { GameOverModal } from '../Modals/GameOverModal';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { Settings, Globe, CloudSnow, CloudRain, Flame, Sun, Trees, Box, Moon, Brain, Shield, Skull, Lock, RotateCcw, Volume2, VolumeX, SkipForward } from 'lucide-react';
+import {
+    Settings, Globe, CloudSnow, CloudRain, Flame, Sun, Trees, Box, Moon,
+    Brain, Shield, Skull, Lock, RotateCcw, Volume2, VolumeX, SkipForward, HelpCircle
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AnimationController } from '../Effects/AnimationController';
 import { TokenAnimationLayer } from '../Effects/TokenAnimationLayer';
 import { DynamicBackground } from '../Effects/DynamicBackground';
-
-import { GameOverModal } from '../Modals/GameOverModal';
-
 import { AIController } from '../../logic/ai/AIController';
 import { soundManager } from '../../logic/sound/SoundManager';
 
@@ -56,6 +58,15 @@ export const GameBoard: React.FC = () => {
     const [isRolling, setIsRolling] = React.useState(false);
     const [isOpponentRolling, setIsOpponentRolling] = React.useState(false);
     const [showSettings, setShowSettings] = useState(false);
+    const [showTutorial, setShowTutorial] = useState(false);
+
+    useEffect(() => {
+        const seen = localStorage.getItem('aesir_tutorial_seen');
+        if (!seen) {
+            const timer = setTimeout(() => setShowTutorial(true), 1000);
+            return () => clearTimeout(timer);
+        }
+    }, []);
     const [weather, setWeather] = useState<WeatherTheme>('ember'); // Default: Ember
     const [bgTheme, setBgTheme] = useState<BackgroundTheme>('stone'); // Default: Stone
     const [isMuted, setIsMuted] = useState(false);
@@ -169,11 +180,23 @@ export const GameBoard: React.FC = () => {
                 <GodSelectionModal onClose={() => { }} />
             )}
 
+            <AnimatePresence>
+                {showTutorial && <TutorialModal onClose={() => setShowTutorial(false)} />}
+            </AnimatePresence>
+
             {/* --- HEADER (Settings) --- */}
-            <div className="absolute top-6 right-6 z-50">
+            <div className="absolute top-6 right-6 z-50 flex items-center gap-4">
+                <button
+                    onClick={() => setShowTutorial(true)}
+                    className="p-3 rounded-full bg-black/40 border border-white/10 text-stone-400 hover:text-viking-gold hover:border-viking-gold/50 transition-all hover:scale-105 hover:shadow-[0_0_15px_rgba(212,175,55,0.2)] group"
+                    title={t('settings.help', 'How to Play')}
+                >
+                    <HelpCircle size={24} className="group-hover:animate-pulse" />
+                </button>
+
                 <button
                     onClick={() => setShowSettings(!showSettings)}
-                    className="p-3 bg-black/40 text-stone-400 hover:text-viking-gold border border-white/5 rounded-full backdrop-blur-md transition-all hover:bg-black/60"
+                    className={`p-3 rounded-full transition-all duration-300 ${showSettings ? 'bg-viking-gold text-black rotate-90 shadow-[0_0_20px_rgba(212,175,55,0.4)]' : 'bg-black/40 text-stone-400 hover:text-white border border-white/10'}`}
                 >
                     <Settings className="w-6 h-6" />
                 </button>
