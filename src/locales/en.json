@@ -22,7 +22,13 @@
         "language": "Language",
         "difficulty": "Difficulty",
         "music": "Music",
-        "restart": "Restart Game"
+        "restart": "Restart Game",
+        "audio_controls": {
+            "mute": "Mute Music",
+            "unmute": "Unmute Music",
+            "skip": "Skip Track",
+            "volume": "Volume"
+        }
     },
     "ai": {
         "difficulty_title": "AI Difficulty",

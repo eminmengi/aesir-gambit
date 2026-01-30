@@ -20,7 +20,7 @@ const MUSIC_PLAYLIST: SoundKey[] = [
 class SoundManager {
     private sounds: Partial<Record<SoundKey, Howl>> = {};
     private isMuted: boolean = false;
-    private volume: number = 0.5;
+    private volume: number = 0.05;
 
     // Core state tracking
     private currentTrack: SoundKey | null = null;

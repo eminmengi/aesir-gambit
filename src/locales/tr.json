@@ -21,7 +21,13 @@
         "language": "Dil",
         "difficulty": "Zorluk",
         "music": "Müzik",
-        "restart": "Oyunu Sıfırla"
+        "restart": "Oyunu Sıfırla",
+        "audio_controls": {
+            "mute": "Sessize Al",
+            "unmute": "Sesi Aç",
+            "skip": "Sıradaki Müzik",
+            "volume": "Ses Seviyesi"
+        }
     },
     "ai": {
         "difficulty_title": "Zorluk Seviyesi",

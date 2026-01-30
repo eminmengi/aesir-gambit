@@ -186,7 +186,7 @@ export const GameBoard: React.FC = () => {
                             exit={{ opacity: 0, y: -10, scale: 0.95 }}
                             className="absolute top-14 right-0 w-72 bg-[#15171b]/95 border border-viking-gold/20 rounded-xl shadow-2xl p-4 flex flex-col gap-4 backdrop-blur-xl"
                         >
-                            {/* Language Toggle */}
+                            {/* 1. Language Toggle */}
                             <button
                                 onClick={toggleLanguage}
                                 className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg text-stone-300 hover:text-white transition-colors text-sm font-serif border border-white/5"
@@ -195,8 +195,33 @@ export const GameBoard: React.FC = () => {
                                 <span>{i18n.language === 'tr' ? 'English' : 'Türkçe'}</span>
                             </button>
 
-                            {/* Music Toggle */}
-                            {/* --- PREMIUM AUDIO CONTROLS --- */}
+                            {/* 2. AI Difficulty Selector */}
+                            <div className="mb-1 p-3 bg-black/40 rounded-lg border border-white/5">
+                                <div className="text-[10px] text-stone-500 uppercase tracking-widest mb-2 flex items-center justify-between">
+                                    <span>{t('ai.difficulty_title')}</span>
+                                    <Lock size={10} className="text-stone-600" />
+                                </div>
+                                <div className={clsx(
+                                    "flex items-center gap-3 text-sm font-bold p-2 rounded",
+                                    aiDifficulty === 'easy' ? "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20" :
+                                        aiDifficulty === 'medium' ? "text-amber-400 bg-amber-500/10 border border-amber-500/20" :
+                                            "text-red-500 bg-red-600/10 border border-red-600/20"
+                                )}>
+                                    {aiDifficulty === 'easy' && <Shield size={18} />}
+                                    {aiDifficulty === 'medium' && <Brain size={18} />}
+                                    {aiDifficulty === 'hard' && <Skull size={18} />}
+                                    <span>
+                                        {aiDifficulty === 'easy' ? t('ai.easy').split(' ')[0] :
+                                            aiDifficulty === 'medium' ? t('ai.medium').split(' ')[0] :
+                                                t('ai.hard').split(' ')[0]}
+                                    </span>
+                                </div>
+                                <div className="mt-2 text-[10px] text-stone-500 italic">
+                                    {t(`ai.${aiDifficulty}_desc`)}
+                                </div>
+                            </div>
+
+                            {/* 3. Audio Controls */}
                             <div className="bg-black/30 rounded-xl p-3 border border-white/5 space-y-3">
                                 <div className="flex items-center justify-between text-[10px] text-stone-500 uppercase tracking-widest font-serif">
                                     <span>{t('settings.music', 'Audio Atmosphere')}</span>
@@ -212,16 +237,16 @@ export const GameBoard: React.FC = () => {
                                             const newMute = soundManager.toggleMute();
                                             setIsMuted(newMute);
                                         }}
+                                        title={isMuted ? t('settings.audio_controls.unmute') : t('settings.audio_controls.mute')}
                                         className={`p-2 rounded-lg border transition-all ${isMuted
                                             ? 'bg-red-900/20 border-red-500/30 text-red-500 hover:bg-red-900/40'
                                             : 'bg-viking-gold/10 border-viking-gold/30 text-viking-gold hover:bg-viking-gold/20'
-                                            }`}
-                                    >
+                                            }`}>
                                         {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
                                     </button>
 
                                     {/* Volume Slider */}
-                                    <div className="flex-1 group relative">
+                                    <div className="flex-1 group relative" title={t('settings.audio_controls.volume')}>
                                         <div className="absolute inset-x-0 h-1 bg-white/10 rounded-full top-1/2 -translate-y-1/2 overflow-hidden">
                                             <div
                                                 className={`h-full transition-all duration-100 ${isMuted ? 'bg-red-900' : 'bg-viking-gold'}`}
@@ -252,79 +277,41 @@ export const GameBoard: React.FC = () => {
                                     <button
                                         onClick={() => soundManager.playNextTrack()}
                                         className="p-2 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 hover:text-white transition-colors text-stone-400"
-                                        title="Next Track"
+                                        title={t('settings.audio_controls.skip')}
                                     >
                                         <SkipForward size={16} />
                                     </button>
                                 </div>
                             </div>
 
-                            {/* Restart Game Button */}
-                            <button
-                                onClick={() => {
-                                    if (confirm(t('common.restart_confirm', 'Oyunu yeniden başlatmak istediğine emin misin?'))) {
-                                        useGameStore.getState().resetGame();
-                                        setShowSettings(false);
-                                    }
-                                }}
-                                className="w-full mb-4 flex items-center justify-center gap-2 p-3 bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 text-red-200 rounded-lg transition-all font-serif uppercase tracking-widest text-xs"
-                            >
-                                <RotateCcw size={14} />
-                                <span>{t('settings.restart')}</span>
-                            </button>
-
-                            {/* AI Difficulty Selector */}
-                            {/* AI Difficulty Status (Read Only) */}
-                            <div className="mb-4 p-3 bg-black/40 rounded-lg border border-white/5">
-                                <div className="text-[10px] text-stone-500 uppercase tracking-widest mb-2 flex items-center justify-between">
-                                    <span>{t('ai.difficulty_title')}</span>
-                                    <Lock size={10} className="text-stone-600" />
+                            {/* 4. Weather Theme */}
+                            <div>
+                                <div className="text-[10px] text-stone-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                    {t('themes.title')}
                                 </div>
-                                <div className={clsx(
-                                    "flex items-center gap-3 text-sm font-bold p-2 rounded",
-                                    aiDifficulty === 'easy' ? "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20" :
-                                        aiDifficulty === 'medium' ? "text-amber-400 bg-amber-500/10 border border-amber-500/20" :
-                                            "text-red-500 bg-red-600/10 border border-red-600/20"
-                                )}>
-                                    {aiDifficulty === 'easy' && <Shield size={18} />}
-                                    {aiDifficulty === 'medium' && <Brain size={18} />}
-                                    {aiDifficulty === 'hard' && <Skull size={18} />}
-                                    <span>
-                                        {aiDifficulty === 'easy' ? t('ai.easy').split(' ')[0] :
-                                            aiDifficulty === 'medium' ? t('ai.medium').split(' ')[0] :
-                                                t('ai.hard').split(' ')[0]}
-                                    </span>
-                                </div>
-                                <div className="mt-2 text-[10px] text-stone-500 italic">
-                                    {t(`ai.${aiDifficulty}_desc`)}
-                                </div>
-                            </div>
-
-                            <div className="text-[10px] text-stone-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                {t('themes.title')}
-                            </div>
-                            <div className="grid grid-cols-4 gap-2">
-                                {(['snow', 'rain', 'ember', 'clear'] as WeatherTheme[]).map((w) => (
-                                    <button
-                                        key={w}
-                                        onClick={() => setWeather(w)}
-                                        className={`
+                                <div className="grid grid-cols-4 gap-2">
+                                    {(['snow', 'rain', 'ember', 'clear'] as WeatherTheme[]).map((w) => (
+                                        <button
+                                            key={w}
+                                            onClick={() => setWeather(w)}
+                                            className={`
                                                 flex items-center justify-center p-3 rounded-lg border transition-all
                                                 ${weather === w
-                                                ? 'bg-viking-gold/20 border-viking-gold text-viking-gold shadow-[0_0_10px_rgba(212,175,55,0.2)]'
-                                                : 'bg-black/40 border-transparent text-stone-500 hover:bg-white/5 hover:text-stone-300'}
+                                                    ? 'bg-viking-gold/20 border-viking-gold text-viking-gold shadow-[0_0_10px_rgba(212,175,55,0.2)]'
+                                                    : 'bg-black/40 border-transparent text-stone-500 hover:bg-white/5 hover:text-stone-300'}
                                             `}
-                                        title={t(`themes.${w}`)}
-                                    >
-                                        {w === 'snow' && <CloudSnow size={18} />}
-                                        {w === 'rain' && <CloudRain size={18} />}
-                                        {w === 'ember' && <Flame size={18} />}
-                                        {w === 'clear' && <Sun size={18} />}
-                                    </button>
-                                ))}
+                                            title={t(`themes.${w}`)}
+                                        >
+                                            {w === 'snow' && <CloudSnow size={18} />}
+                                            {w === 'rain' && <CloudRain size={18} />}
+                                            {w === 'ember' && <Flame size={18} />}
+                                            {w === 'clear' && <Sun size={18} />}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
 
-                            {/* Background Texture Selector */}
+                            {/* 5. Background Texture */}
                             <div>
                                 <div className="text-[10px] text-stone-500 uppercase tracking-widest mb-2">{t('themes.bg_texture', 'Zemin / Doku')}</div>
                                 <div className="grid grid-cols-3 gap-2">
@@ -352,9 +339,19 @@ export const GameBoard: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="text-[10px] text-stone-700 text-center uppercase tracking-widest pt-2 border-t border-white/5">
-                                v0.4.4
-                            </div>
+                            {/* 6. Restart Game (Last) */}
+                            <button
+                                onClick={() => {
+                                    if (confirm(t('common.restart_confirm', 'Oyunu yeniden başlatmak istediğine emin misin?'))) {
+                                        useGameStore.getState().resetGame();
+                                        setShowSettings(false);
+                                    }
+                                }}
+                                className="w-full mt-2 flex items-center justify-center gap-2 p-3 bg-red-900/40 hover:bg-red-900/60 border border-red-500/30 text-red-200 rounded-lg transition-all font-serif uppercase tracking-widest text-xs"
+                            >
+                                <RotateCcw size={14} />
+                                <span>{t('settings.restart')}</span>
+                            </button>
                         </motion.div>
                     )}
                 </AnimatePresence>
