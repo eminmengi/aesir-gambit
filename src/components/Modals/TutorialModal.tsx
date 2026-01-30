@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { ChevronRight, ChevronLeft, X, Check, Swords, Coins, Sparkles } from 'lucide-react';
 import { Dice3D } from '../Dice/Dice3D';
-import clsx from 'clsx';
+
 
 // Slide Components (Refined)
 const Slide1_Goal: React.FC = () => {
